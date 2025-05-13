@@ -4,15 +4,20 @@
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@0.20": "0.20.0",
     "jsr:@deno/dnt@*": "0.42.1",
+    "jsr:@std/assert@*": "1.0.13",
+    "jsr:@std/assert@^1.0.10": "1.0.13",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
     "jsr:@std/fmt@1": "1.0.8",
     "jsr:@std/fmt@^1.0.3": "1.0.8",
     "jsr:@std/fs@1": "1.0.17",
     "jsr:@std/fs@^1.0.6": "1.0.17",
+    "jsr:@std/internal@^1.0.5": "1.0.6",
+    "jsr:@std/internal@^1.0.6": "1.0.6",
     "jsr:@std/io@0.225": "0.225.2",
     "jsr:@std/path@1": "1.0.9",
     "jsr:@std/path@^1.0.8": "1.0.9",
     "jsr:@std/path@^1.0.9": "1.0.9",
+    "jsr:@std/testing@*": "1.0.9",
     "jsr:@ts-morph/bootstrap@0.25": "0.25.0",
     "jsr:@ts-morph/common@0.25": "0.25.0",
     "npm:@hono/zod-openapi@~0.19.6": "0.19.6_hono@4.7.9_zod@3.24.4",
@@ -45,6 +50,12 @@
         "jsr:@ts-morph/bootstrap"
       ]
     },
+    "@std/assert@1.0.13": {
+      "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
+      "dependencies": [
+        "jsr:@std/internal@^1.0.6"
+      ]
+    },
     "@std/bytes@1.0.6": {
       "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
@@ -57,6 +68,9 @@
         "jsr:@std/path@^1.0.9"
       ]
     },
+    "@std/internal@1.0.6": {
+      "integrity": "9533b128f230f73bd209408bb07a4b12f8d4255ab2a4d22a1fd6d87304aca9a4"
+    },
     "@std/io@0.225.2": {
       "integrity": "3c740cd4ee4c082e6cfc86458f47e2ab7cb353dc6234d5e9b1f91a2de5f4d6c7",
       "dependencies": [
@@ -65,6 +79,13 @@
     },
     "@std/path@1.0.9": {
       "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
+    },
+    "@std/testing@1.0.9": {
+      "integrity": "9bdd4ac07cb13e7594ac30e90f6ceef7254ac83a9aeaa089be0008f33aab5cd4",
+      "dependencies": [
+        "jsr:@std/assert@^1.0.10",
+        "jsr:@std/internal@^1.0.5"
+      ]
     },
     "@ts-morph/bootstrap@0.25.0": {
       "integrity": "3cd33ee80ac0aab8e5d2660c639a02187f0c8abfe454636ce86c00eb7e8407db",
