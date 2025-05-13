@@ -1,3 +1,4 @@
+import type { Logger } from "../types/types.ts"
 import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
 
 export interface AuthorizePayload {
@@ -20,6 +21,7 @@ interface IamValidationResponseInvalid {
 export type IamValidationResponse = IamValidationResponseValid | IamValidationResponseInvalid
 
 export async function authorize(
+  logger: Logger,
   iamUrl: string,
   type: "users" | "keys",
   id: string,
@@ -40,9 +42,9 @@ export async function authorize(
 
   if (data.valid) {
     // this.hashMap.set(`${id}-${data.checksum}`, true)
-    console.debug(`IAM validation passed for ${type} ${id} with checksum ${data.checksum}`)
+    logger.debug(`IAM validation passed for ${type} ${id} with checksum ${data.checksum}`)
   } else {
-    console.info("IAM validation failed", data)
+    logger.info("IAM validation failed", { data })
     throw new AppExceptionForbidden("IAM validation failed", data.validPolicies, data.invalidRequest)
   }
 }

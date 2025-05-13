@@ -1,7 +1,7 @@
 // ex. scripts/build_npm.ts
-import { build, emptyDir } from "jsr:@deno/dnt";
-import denoJson from "../deno.json" with { type: "json" };
-await emptyDir("./npm");
+import { build, emptyDir } from "jsr:@deno/dnt"
+import denoJson from "../deno.json" with { type: "json" }
+await emptyDir("./npm")
 
 await build({
   entryPoints: ["./src/mod.ts"],
@@ -30,7 +30,7 @@ await build({
   postBuild() {
     // steps to run after building and before running the tests
     // Deno.copyFileSync("LICENSE", "npm/LICENSE")
-    Deno.copyFileSync("README.md", "npm/README.md");
-    Deno.copyFileSync("CHANGELOG.md", "npm/CHANGELOG.md");
+    Deno.copyFileSync("README.md", "npm/README.md")
+    Deno.copyFileSync("CHANGELOG.md", "npm/CHANGELOG.md")
   },
-});
+})

@@ -166,14 +166,27 @@ export interface RouteOptions<
     query?: Q
     body?: B
   }
-  output?: R
+  output: R
   auth?: {
     optional?: Auth
     type?: [AuthType, ...AuthType[]]
-    resource?: (params: P extends z.ZodSchema ? z.infer<P> : never) => Promise<A>
-    permissions?: (resource: A, params: P extends z.ZodSchema ? z.infer<P> : never) => AuthorizePayload[]
+    resource?: (input: {
+      headers: H extends z.ZodSchema ? z.infer<H> : never
+      params: P extends z.ZodSchema ? z.infer<P> : never
+      query: Q extends z.ZodSchema ? z.infer<Q> : never
+      body: B extends z.ZodSchema ? z.infer<B> : never
+      auth: Auth extends true ? MaybeAuthenticated : Authenticated
+    }) => Promise<A>
+    permissions?: (input: {
+      headers: H extends z.ZodSchema ? z.infer<H> : never
+      params: P extends z.ZodSchema ? z.infer<P> : never
+      query: Q extends z.ZodSchema ? z.infer<Q> : never
+      body: B extends z.ZodSchema ? z.infer<B> : never
+      auth: Auth extends true ? MaybeAuthenticated : Authenticated
+      resource: A
+    }) => AuthorizePayload[]
   }
-  handler?: (input: {
+  handler: (input: {
     headers: H extends z.ZodSchema ? z.infer<H> : never
     params: P extends z.ZodSchema ? z.infer<P> : never
     query: Q extends z.ZodSchema ? z.infer<Q> : never

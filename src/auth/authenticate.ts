@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose"
 import { AppExceptionUnauthorized } from "./../exceptions/app-exceptions.ts"
-import { AuthType } from "./../types/types.ts"
+import { AuthType, type Logger } from "./../types/types.ts"
 
 export type FlowcoreJWTPayload = JWTPayload & {
   flowcore_user_id: string
@@ -25,6 +25,7 @@ export type Authenticated = AuthenticatedUser | AuthenticatedApiKey
 export type MaybeAuthenticated = Authenticated | undefined
 
 export async function authenticate(
+  logger: Logger,
   jwksUrl: string,
   apiKeyUrl: string,
   authorizationHeader?: string,
@@ -40,7 +41,7 @@ export async function authenticate(
     const jwks = createRemoteJWKSet(new URL(jwksUrl))
     const token = authorizationHeader.slice(7)
     const decoded = await jwtVerify<FlowcoreJWTPayload>(token, jwks).catch((error) => {
-      console.error(error)
+      logger.error(error)
       throw new AppExceptionUnauthorized(error.message)
     })
     if (!decoded.payload?.flowcore_user_id) {

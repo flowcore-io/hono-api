@@ -5,27 +5,61 @@ import type { HonoApiRouter, RouteOptions } from "./hono-api-router.ts"
 import { AppException, AppExceptionBadRequest, AppExceptionUnauthorized } from "../exceptions/app-exceptions.ts"
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
 import { authorize } from "../auth/authorize.ts"
-import packageJson from "./../../deno.json" with { type: "json" }
 import type { Logger } from "../types/types.ts"
 
 export interface HonoApiOptions {
-  auth: {
-    jwks_url: string
-    api_key_url: string
-    iam_url: string
+  auth?: {
+    jwks_url?: string
+    api_key_url?: string
+    iam_url?: string
   }
   openapi?: {
     docPath?: string
     jsonPath?: string
+    version?: string
+    name?: string
+    description?: string
   }
-  logger: Logger
+  logger?: Logger
 }
 
 export class HonoApi {
   public readonly app: OpenAPIHono
   private readonly routers: HonoApiRouter[] = []
 
-  constructor(private readonly options: HonoApiOptions) {
+  private logger: Logger = console
+
+  private authOptions = {
+    jwks_url: "https://auth.flowcore.io/realms/flowcore/protocol/openid-connect/certs",
+    api_key_url: "https://iam.api.flowcore.io",
+    iam_url: "https://iam.api.flowcore.io",
+  }
+
+  private openapiOptions = {
+    docPath: "/swagger",
+    jsonPath: "/swagger/openapi.json",
+    version: "0.0.0",
+    name: "Hono API",
+    description: "Hono API",
+  }
+
+  constructor(options: HonoApiOptions) {
+    if (options.auth) {
+      this.authOptions = {
+        ...this.authOptions,
+        ...options.auth,
+      }
+    }
+    if (options.openapi) {
+      this.openapiOptions = {
+        ...this.openapiOptions,
+        ...options.openapi,
+      }
+    }
+    if (options.logger) {
+      this.logger = options.logger
+    }
+
     this.app = new OpenAPIHono({
       defaultHook: (result) => {
         if (!result.success) {
@@ -36,22 +70,19 @@ export class HonoApi {
     this.app.notFound(this.notFoundHandler)
     this.app.onError(this.errorHandler)
 
-    const docPath = this.options.openapi?.docPath ?? "/doc"
-    const docJsonPath = this.options.openapi?.jsonPath ?? "/openapi.json"
-
-    this.app.doc(docJsonPath, {
+    this.app.doc(this.openapiOptions.jsonPath, {
       openapi: "3.1.0",
       info: {
-        version: packageJson.version,
-        title: packageJson.name,
-        description: packageJson.description,
+        version: this.openapiOptions.version ?? "0.0.0",
+        title: this.openapiOptions.name ?? "Hono API",
+        description: this.openapiOptions.description ?? "Hono API",
       },
     })
 
     this.app.get(
-      docPath,
+      this.openapiOptions.docPath,
       Scalar({
-        url: docJsonPath,
+        url: this.openapiOptions.jsonPath,
         theme: "solarized",
       }),
     )
@@ -66,7 +97,10 @@ export class HonoApi {
       },
     }))
     for (const route of routes) {
-      console.log("Adding route", route.routeConfig.method, route.routeConfig.path)
+      this.logger.debug("Adding route", {
+        method: route.routeConfig.method,
+        path: route.routeConfig.path,
+      })
       this.addRoute(this.app, route.routeConfig, route.inOptions)
     }
   }
@@ -95,7 +129,10 @@ export class HonoApi {
         error.status,
       )
     }
-    console.error(error)
+    this.logger.error(error, {
+      path: c.req.path,
+      method: c.req.method,
+    })
     return c.json(
       {
         status: 500,
@@ -137,22 +174,48 @@ export class HonoApi {
         >,
       ) => {
         const params = c.req.valid("param") as P extends z.ZodSchema ? z.infer<P> : never
+        const headers = c.req.valid("header") as H extends z.ZodSchema ? z.infer<H> : never
+        const query = c.req.valid("query") as Q extends z.ZodSchema ? z.infer<Q> : never
+        const body = inOptions.input?.body
+          ? ((await c.req.json()) as B extends z.ZodSchema ? z.infer<B> : never)
+          : undefined
+
         const user = await authenticate(
-          this.options.auth.jwks_url,
-          this.options.auth.api_key_url,
+          this.logger,
+          this.authOptions.jwks_url,
+          this.authOptions.api_key_url,
           c.req.header("Authorization"),
           inOptions.auth?.type,
         )
         let resource: A | undefined = undefined
 
         if (inOptions.auth) {
-          resource = await inOptions.auth.resource?.(params)
-          const permissions = inOptions.auth.permissions?.(resource as unknown as A, params) ?? []
+          resource = await inOptions.auth.resource?.({
+            params,
+            headers,
+            query,
+            body: body as B extends z.ZodSchema ? z.infer<B> : never,
+            auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
+          })
+          const permissions = inOptions.auth.permissions?.({
+            headers,
+            params,
+            query,
+            body: body as B extends z.ZodSchema ? z.infer<B> : never,
+            auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
+            resource: resource as A,
+          }) ?? []
           if (permissions.length > 0) {
             if (!user) {
               throw new AppExceptionUnauthorized()
             }
-            await authorize(this.options.auth.iam_url, user?.type === "apiKey" ? "keys" : "users", user.id, permissions)
+            await authorize(
+              this.logger,
+              this.authOptions.iam_url,
+              user?.type === "apiKey" ? "keys" : "users",
+              user.id,
+              permissions,
+            )
           }
         }
 
@@ -160,14 +223,10 @@ export class HonoApi {
           throw new AppExceptionUnauthorized()
         }
 
-        const body = inOptions.input?.body
-          ? ((await c.req.json()) as B extends z.ZodSchema ? z.infer<B> : never)
-          : undefined
-
         const response = await (inOptions.handler?.({
-          headers: c.req.valid("header") as H extends z.ZodSchema ? z.infer<H> : never,
+          headers,
           params,
-          query: c.req.valid("query") as Q extends z.ZodSchema ? z.infer<Q> : never,
+          query,
           body: body as B extends z.ZodSchema ? z.infer<B> : never,
           auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
           resource: resource as A,
