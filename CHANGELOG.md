@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.10](https://github.com/flowcore-io/hono-api/compare/v0.0.9...v0.0.10) (2025-05-14)
+
+
+### Bug Fixes
+
+* use undefined instead of never ([f869fe6](https://github.com/flowcore-io/hono-api/commit/f869fe635ec5040a7bd11b3ca169599ed18d2eef))
+
 ## [0.0.9](https://github.com/flowcore-io/hono-api/compare/v0.0.8...v0.0.9) (2025-05-14)
 
 
