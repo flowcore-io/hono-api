@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.5](https://github.com/flowcore-io/hono-api/compare/v0.0.4...v0.0.5) (2025-05-14)
+
+
+### Bug Fixes
+
+* add environment class ([2cc070f](https://github.com/flowcore-io/hono-api/commit/2cc070f5ab0770273038bf1089c32b5dda127675))
+* add explicit types ([f30e47a](https://github.com/flowcore-io/hono-api/commit/f30e47a62f0c20d8fd8fdad78fae7c225b2e73fc))
+* add more response on 403 ([f2fd71b](https://github.com/flowcore-io/hono-api/commit/f2fd71bf6e7df548d7d67cd84b9cbb9aec676586))
+
 ## [0.0.4](https://github.com/flowcore-io/hono-api/compare/v0.0.3...v0.0.4) (2025-05-14)
 
 
