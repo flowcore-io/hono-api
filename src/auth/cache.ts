@@ -1,18 +1,41 @@
-import { BunSqliteKeyValue } from "bun-sqlite-key-value"
+import type { BunSqliteKeyValue } from "bun-sqlite-key-value"
 import * as xxHash from "@jabr/xxhash64"
+import process from "node:process"
+import type { Logger } from "../types/types.ts"
 
 interface AuthCacheOptions {
   ttlMs: number
+  logger?: Logger
 }
 
 export class AuthCache {
-  private cache: BunSqliteKeyValue
+  private logger: Logger = console
+  private isBun = false
+  private cache?: Map<string, boolean> | BunSqliteKeyValue
   private hasher?: xxHash.Hasher
 
   constructor(public readonly options: AuthCacheOptions) {
-    this.cache = new BunSqliteKeyValue(":memory:", {
-      ttlMs: options.ttlMs,
-    })
+    if (process.versions.bun) {
+      this.logger.debug("Using BunSqliteKeyValue for auth cache")
+      this.isBun = true
+    } else {
+      this.logger.debug("Using Map for auth cache")
+    }
+  }
+
+  private async getCacheDriver(): Promise<Map<string, boolean> | BunSqliteKeyValue> {
+    if (this.cache) {
+      return this.cache
+    }
+    if (this.isBun) {
+      const { BunSqliteKeyValue } = await import("bun-sqlite-key-value")
+      this.cache = new BunSqliteKeyValue(":memory:", {
+        ttlMs: this.options.ttlMs,
+      })
+    } else {
+      this.cache = new Map<string, boolean>()
+    }
+    return this.cache
   }
 
   public async hash(value: string): Promise<string> {
@@ -22,13 +45,13 @@ export class AuthCache {
     return this.hasher.hash(value, "hex").toString()
   }
 
-  // deno-lint-ignore require-await
   public async get(key: string): Promise<boolean | undefined> {
-    return this.cache.get<boolean>(key)
+    const cache = await this.getCacheDriver()
+    return cache.get(key)
   }
 
-  // deno-lint-ignore require-await
   public async set(key: string, value: boolean): Promise<void> {
-    this.cache.set(key, value)
+    const cache = await this.getCacheDriver()
+    cache.set(key, value)
   }
 }

@@ -36,7 +36,7 @@ export class HonoApi {
 
   private authOptions = {
     jwks_url: "https://auth.flowcore.io/realms/flowcore/protocol/openid-connect/certs",
-    api_key_url: "https://iam.api.flowcore.io",
+    api_key_url: "https://security-key.api.flowcore.io",
     iam_url: "https://iam.api.flowcore.io",
   }
 
