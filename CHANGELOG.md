@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/flowcore-io/hono-api/compare/v0.0.5...v0.0.6) (2025-05-14)
+
+
+### Bug Fixes
+
+* support cache for non bun ([6c27a4c](https://github.com/flowcore-io/hono-api/commit/6c27a4ca6a0ec1d9275e871901903e9378030cb6))
+
 ## [0.0.5](https://github.com/flowcore-io/hono-api/compare/v0.0.4...v0.0.5) (2025-05-14)
 
 
