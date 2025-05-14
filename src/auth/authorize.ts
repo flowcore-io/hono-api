@@ -4,9 +4,16 @@ import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
 import type { Authenticated } from "./authenticate.ts"
 import { AuthCache } from "./cache.ts"
 
-const authCache = new AuthCache({
-  ttlMs: 300_000,
-})
+let _authCache: AuthCache | undefined
+function getAuthCache(logger: Logger): AuthCache {
+  if (!_authCache) {
+    _authCache = new AuthCache({
+      ttlMs: 300_000,
+      logger,
+    })
+  }
+  return _authCache
+}
 
 export const AuthorizeValidPoliciesSchema: z.ZodObject<{
   policyFrn: z.ZodString
@@ -72,8 +79,8 @@ export async function authorize(
     return
   }
 
-  const checksum = await authCache.hash(JSON.stringify(payload))
-  const localChecksum = await authCache.get(`${auth.id}-${checksum}`)
+  const checksum = await getAuthCache(options.logger).hash(JSON.stringify(payload))
+  const localChecksum = await getAuthCache(options.logger).get(`${auth.id}-${checksum}`)
   if (localChecksum === true) {
     return
   }
@@ -92,7 +99,7 @@ export async function authorize(
   const data = (await response.json()) as IamValidationResponse
 
   if (data.valid) {
-    await authCache.set(`${auth.id}-${data.checksum}`, true).catch(options.logger.warn)
+    await getAuthCache(options.logger).set(`${auth.id}-${data.checksum}`, true).catch(options.logger.warn)
     options.logger.debug(`IAM validation passed for ${options.type} ${auth.id} with checksum ${data.checksum}`)
   } else {
     options.logger.info("IAM validation failed", { data })
