@@ -27,6 +27,9 @@ await build({
       url: "https://github.com/flowcore-io/hono-api/issues",
     },
   },
+  compilerOptions: {
+    lib: ["ES2023", "DOM"],
+  },
   postBuild() {
     // steps to run after building and before running the tests
     // Deno.copyFileSync("LICENSE", "npm/LICENSE")
