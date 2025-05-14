@@ -17,7 +17,9 @@
   },
   "imports": {
     "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.6",
+    "@jabr/xxhash64": "jsr:@jabr/xxhash64@^2.0.0",
     "@scalar/hono-api-reference": "npm:@scalar/hono-api-reference@^0.8.9",
+    "bun-sqlite-key-value": "npm:bun-sqlite-key-value@^1.13.1",
     "hono": "npm:hono@^4.7.9",
     "jose": "npm:jose@^6.0.11",
     "zod": "npm:zod@^3.24.4"

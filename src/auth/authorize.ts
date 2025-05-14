@@ -1,6 +1,11 @@
 import type { Logger } from "../types/types.ts"
 import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
 import type { Authenticated } from "./authenticate.ts"
+import { AuthCache } from "./cache.ts"
+
+const authCache = new AuthCache({
+  ttlMs: 300_000,
+})
 
 export interface AuthorizePayload {
   action: string | string[]
@@ -39,6 +44,12 @@ export async function authorize(
     return
   }
 
+  const checksum = await authCache.hash(JSON.stringify(payload))
+  const localChecksum = await authCache.get(`${auth.id}-${checksum}`)
+  if (localChecksum === true) {
+    return
+  }
+
   const response = await fetch(`${options.iamUrl}/api/v1/validate/${options.type}/${auth.id}`, {
     method: "POST",
     headers: {
@@ -53,7 +64,7 @@ export async function authorize(
   const data = (await response.json()) as IamValidationResponse
 
   if (data.valid) {
-    // this.hashMap.set(`${id}-${data.checksum}`, true)
+    await authCache.set(`${auth.id}-${checksum}`, true).catch(options.logger.warn)
     options.logger.debug(`IAM validation passed for ${options.type} ${auth.id} with checksum ${data.checksum}`)
   } else {
     options.logger.info("IAM validation failed", { data })

@@ -4,6 +4,7 @@
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@0.20": "0.20.0",
     "jsr:@deno/dnt@*": "0.42.1",
+    "jsr:@jabr/xxhash64@2": "2.0.0",
     "jsr:@std/assert@*": "1.0.13",
     "jsr:@std/assert@^1.0.10": "1.0.13",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
@@ -22,6 +23,7 @@
     "jsr:@ts-morph/common@0.25": "0.25.0",
     "npm:@hono/zod-openapi@~0.19.6": "0.19.6_hono@4.7.9_zod@3.24.4",
     "npm:@scalar/hono-api-reference@~0.8.9": "0.8.9_hono@4.7.9",
+    "npm:bun-sqlite-key-value@^1.13.1": "1.13.1_typescript@5.8.2",
     "npm:hono@^4.7.9": "4.7.9",
     "npm:jose@^6.0.11": "6.0.11",
     "npm:zod@^3.24.4": "3.24.4"
@@ -49,6 +51,9 @@
         "jsr:@std/path@1",
         "jsr:@ts-morph/bootstrap"
       ]
+    },
+    "@jabr/xxhash64@2.0.0": {
+      "integrity": "a109e902abb6787816112ac71fd9145d39f8fccb45f96d1707c82197bd8fbfbd"
     },
     "@std/assert@1.0.13": {
       "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
@@ -152,6 +157,12 @@
         "zod@3.24.1"
       ]
     },
+    "bun-sqlite-key-value@1.13.1_typescript@5.8.2": {
+      "integrity": "sha512-cb3thB8QXPeXB6B7NhObpADEYvtVNwqg/0ED7PgKt2OxVAxPSejkiTsy1+byQDC0AwLYajw3nhtr/ubKvcLcKw==",
+      "dependencies": [
+        "typescript"
+      ]
+    },
     "hono@4.7.9": {
       "integrity": "sha512-/EsCoR5h7N4yu01TDu9GMCCJa6ZLk5ZJIWFFGNawAXmd1Tp53+Wir4xm0D2X19bbykWUlzQG0+BvPAji6p9E8Q=="
     },
@@ -168,6 +179,10 @@
         "yaml"
       ]
     },
+    "typescript@5.8.2": {
+      "integrity": "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ==",
+      "bin": true
+    },
     "yaml@2.7.1": {
       "integrity": "sha512-10ULxpnOCQXxJvBgxsn9ptjq6uviG/htZKk9veJGhlqn3w/DxQ631zFF+nlQXLwmImeS5amR2dl2U8sg6U9jsQ==",
       "bin": true
@@ -181,8 +196,10 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@jabr/xxhash64@2",
       "npm:@hono/zod-openapi@~0.19.6",
       "npm:@scalar/hono-api-reference@~0.8.9",
+      "npm:bun-sqlite-key-value@^1.13.1",
       "npm:hono@^4.7.9",
       "npm:jose@^6.0.11",
       "npm:zod@^3.24.4"
