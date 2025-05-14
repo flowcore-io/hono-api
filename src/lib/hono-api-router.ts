@@ -171,6 +171,7 @@ export interface RouteOptions<
     optional?: Auth
     type?: [AuthType, ...AuthType[]]
     mode?: "tenant" | "tenantId"
+    allowFlowcoreAdmin?: boolean
     resource?: (input: {
       headers: H extends z.ZodSchema ? z.infer<H> : never
       params: P extends z.ZodSchema ? z.infer<P> : never

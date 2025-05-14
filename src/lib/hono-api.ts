@@ -210,12 +210,15 @@ export class HonoApi {
               throw new AppExceptionUnauthorized()
             }
             await authorize(
-              user.id,
+              user,
               permissions,
-              this.logger,
-              this.authOptions.iam_url,
-              user.type === "apiKey" ? "keys" : "users",
-              inOptions.auth?.mode === "tenant" ? "tenant" : "organization",
+              {
+                iamUrl: this.authOptions.iam_url,
+                allowFlowcoreAdmin: inOptions.auth?.allowFlowcoreAdmin,
+                type: user.type === "apiKey" ? "keys" : "users",
+                mode: inOptions.auth?.mode === "tenant" ? "tenant" : "organization",
+                logger: this.logger,
+              },
             )
           }
         }

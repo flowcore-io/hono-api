@@ -1,5 +1,6 @@
 import type { Logger } from "../types/types.ts"
 import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
+import type { Authenticated } from "./authenticate.ts"
 
 export interface AuthorizePayload {
   action: string | string[]
@@ -20,21 +21,31 @@ interface IamValidationResponseInvalid {
 
 export type IamValidationResponse = IamValidationResponseValid | IamValidationResponseInvalid
 
+interface AuthorizeOptions {
+  iamUrl: string
+  allowFlowcoreAdmin?: boolean
+  type: "users" | "keys"
+  mode: "tenant" | "organization"
+  logger: Logger
+}
+
 export async function authorize(
-  id: string,
+  auth: Authenticated,
   payload: AuthorizePayload[],
-  logger: Logger,
-  iamUrl: string,
-  type: "users" | "keys",
-  mode: "tenant" | "organization" = "tenant",
+  options: AuthorizeOptions,
 ): Promise<void> {
-  const response = await fetch(`${iamUrl}/api/v1/validate/${type}/${id}`, {
+  // Check if we should allow flowcore admin
+  if (options.allowFlowcoreAdmin && auth.type === "bearer" && auth.isFlowcoreAdmin) {
+    return
+  }
+
+  const response = await fetch(`${options.iamUrl}/api/v1/validate/${options.type}/${auth.id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      mode,
+      mode: options.mode,
       requestedAccess: payload,
     }),
   })
@@ -43,9 +54,9 @@ export async function authorize(
 
   if (data.valid) {
     // this.hashMap.set(`${id}-${data.checksum}`, true)
-    logger.debug(`IAM validation passed for ${type} ${id} with checksum ${data.checksum}`)
+    options.logger.debug(`IAM validation passed for ${options.type} ${auth.id} with checksum ${data.checksum}`)
   } else {
-    logger.info("IAM validation failed", { data })
+    options.logger.info("IAM validation failed", { data })
     throw new AppExceptionForbidden("IAM validation failed", data.validPolicies, data.invalidRequest)
   }
 }
