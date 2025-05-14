@@ -21,11 +21,12 @@ interface IamValidationResponseInvalid {
 export type IamValidationResponse = IamValidationResponseValid | IamValidationResponseInvalid
 
 export async function authorize(
+  id: string,
+  payload: AuthorizePayload[],
   logger: Logger,
   iamUrl: string,
   type: "users" | "keys",
-  id: string,
-  payload: AuthorizePayload[],
+  mode: "tenant" | "organization" = "tenant",
 ): Promise<void> {
   const response = await fetch(`${iamUrl}/api/v1/validate/${type}/${id}`, {
     method: "POST",
@@ -33,7 +34,7 @@ export async function authorize(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      mode: "tenant",
+      mode,
       requestedAccess: payload,
     }),
   })

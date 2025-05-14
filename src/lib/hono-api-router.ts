@@ -170,6 +170,7 @@ export interface RouteOptions<
   auth?: {
     optional?: Auth
     type?: [AuthType, ...AuthType[]]
+    mode?: "tenant" | "tenantId"
     resource?: (input: {
       headers: H extends z.ZodSchema ? z.infer<H> : never
       params: P extends z.ZodSchema ? z.infer<P> : never
