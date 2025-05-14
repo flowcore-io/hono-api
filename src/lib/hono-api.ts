@@ -30,7 +30,6 @@ export interface HonoApiOptions {
 
 export class HonoApi {
   public readonly app: OpenAPIHono
-  private readonly routers: HonoApiRouter[] = []
 
   private logger: Logger = console
 
