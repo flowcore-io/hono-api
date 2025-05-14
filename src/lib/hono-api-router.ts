@@ -40,7 +40,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): void {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("get", path, inOptions)
   }
 
@@ -52,7 +52,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): void {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("post", path, inOptions)
   }
 
@@ -64,7 +64,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): void {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("patch", path, inOptions)
   }
 
@@ -76,7 +76,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): void {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("put", path, inOptions)
   }
 
@@ -88,7 +88,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): void {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("delete", path, inOptions)
   }
 
@@ -104,7 +104,7 @@ export class HonoApiRouter {
     method: "get" | "post" | "put" | "delete" | "patch",
     path: string,
     inOptions: RouteOptions<H, P, Q, B, R, A, Auth>,
-  ): void {
+  ): HonoApiRouter {
     const options = {
       method,
       path,
@@ -148,6 +148,7 @@ export class HonoApiRouter {
     }
 
     this.routes.push({ routeConfig: options, inOptions })
+    return this
   }
 }
 
