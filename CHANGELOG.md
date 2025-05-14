@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.9](https://github.com/flowcore-io/hono-api/compare/v0.0.8...v0.0.9) (2025-05-14)
+
+
+### Bug Fixes
+
+* use null as 201 response ([8f8bf4a](https://github.com/flowcore-io/hono-api/commit/8f8bf4af1941f3b454ee0e9f413f38679dc9f329))
+
 ## [0.0.8](https://github.com/flowcore-io/hono-api/compare/v0.0.7...v0.0.8) (2025-05-14)
 
 
