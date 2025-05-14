@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.0.7](https://github.com/flowcore-io/hono-api/compare/v0.0.6...v0.0.7) (2025-05-14)
+
+
+### Bug Fixes
+
+* allow chaining of routes ([2183381](https://github.com/flowcore-io/hono-api/commit/21833816633f83c42ae9450390885dc71bf3c332))
+* init auth cache ([2507a4b](https://github.com/flowcore-io/hono-api/commit/2507a4b1af7e14829e02569f45127a09ca5156b3))
+* use provided logger for auth cache ([9a0d1ac](https://github.com/flowcore-io/hono-api/commit/9a0d1ac7ac9055d978ba8b34784c369e00cc4e0a))
+
 ## [0.0.6](https://github.com/flowcore-io/hono-api/compare/v0.0.5...v0.0.6) (2025-05-14)
 
 
