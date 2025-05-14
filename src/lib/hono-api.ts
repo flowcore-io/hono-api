@@ -257,14 +257,19 @@ export class HonoApi {
           throw new AppExceptionUnauthorized()
         }
 
-        const response = await (inOptions.handler?.({
+        const response = await inOptions.handler({
           headers,
           params,
           query,
           body: body as B extends z.ZodSchema ? z.infer<B> : never,
           auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
           resource: resource as A,
-        }) ?? c.json({ message: "Not implemented" }))
+        })
+
+        if (response === undefined) {
+          c.status(201)
+          return c.text("")
+        }
         return c.json(response)
       },
     )

@@ -128,6 +128,13 @@ export class HonoApiRouter {
           },
         },
       }
+    } else {
+      options.responses = {
+        ...defaultResponses,
+        201: {
+          description: "OK",
+        },
+      }
     }
 
     if (inOptions.input) {
@@ -167,7 +174,7 @@ export interface RouteOptions<
     query?: Q
     body?: B
   }
-  output: R
+  output?: R
   auth?: {
     optional?: Auth
     type?: [AuthType, ...AuthType[]]
@@ -196,5 +203,5 @@ export interface RouteOptions<
     body: B extends z.ZodSchema ? z.infer<B> : never
     auth: Auth extends true ? MaybeAuthenticated : Authenticated
     resource: A
-  }) => Promise<z.infer<R>> | z.infer<R>
+  }) => R extends z.ZodNever ? void : Promise<z.infer<R>> | z.infer<R>
 }
