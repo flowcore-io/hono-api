@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.8](https://github.com/flowcore-io/hono-api/compare/v0.0.7...v0.0.8) (2025-05-14)
+
+
+### Bug Fixes
+
+* use 201 response when no output is defined ([ebe902f](https://github.com/flowcore-io/hono-api/commit/ebe902f1710e234b242df04427a7491492fe9158))
+
 ## [0.0.7](https://github.com/flowcore-io/hono-api/compare/v0.0.6...v0.0.7) (2025-05-14)
 
 
