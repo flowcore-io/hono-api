@@ -64,7 +64,7 @@ export async function authorize(
   const data = (await response.json()) as IamValidationResponse
 
   if (data.valid) {
-    await authCache.set(`${auth.id}-${checksum}`, true).catch(options.logger.warn)
+    await authCache.set(`${auth.id}-${data.checksum}`, true).catch(options.logger.warn)
     options.logger.debug(`IAM validation passed for ${options.type} ${auth.id} with checksum ${data.checksum}`)
   } else {
     options.logger.info("IAM validation failed", { data })
