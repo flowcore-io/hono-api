@@ -5,7 +5,7 @@ import type { Authenticated } from "./authenticate.ts"
 import { AuthCache } from "./cache.ts"
 
 let _authCache: AuthCache | undefined
-function getAuthCache(logger: Logger): AuthCache {
+export function getAuthCache(logger: Logger): AuthCache {
   if (!_authCache) {
     _authCache = new AuthCache({
       ttlMs: 300_000,

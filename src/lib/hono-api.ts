@@ -9,7 +9,7 @@ import {
   AppExceptionUnauthorized,
 } from "../exceptions/app-exceptions.ts"
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
-import { authorize } from "../auth/authorize.ts"
+import { authorize, getAuthCache } from "../auth/authorize.ts"
 import type { Logger } from "../types/types.ts"
 
 export interface HonoApiOptions {
@@ -49,6 +49,9 @@ export class HonoApi {
   }
 
   constructor(options: HonoApiOptions) {
+    // Initialize the auth cache
+    void getAuthCache(this.logger)
+
     if (options.auth) {
       this.authOptions = {
         ...this.authOptions,
