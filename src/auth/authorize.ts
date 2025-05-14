@@ -8,7 +8,10 @@ const authCache = new AuthCache({
   ttlMs: 300_000,
 })
 
-export const AuthorizeValidPoliciesSchema = z.object({
+export const AuthorizeValidPoliciesSchema: z.ZodObject<{
+  policyFrn: z.ZodString
+  statementId: z.ZodString
+}> = z.object({
   policyFrn: z.string(),
   statementId: z.string(),
 })
@@ -19,7 +22,10 @@ export const AuthorizeValidPoliciesSchema = z.object({
     },
   })
 
-export const AuthorizePayloadSchema = z.object({
+export const AuthorizePayloadSchema: z.ZodObject<{
+  action: z.ZodUnion<[z.ZodString, z.ZodArray<z.ZodString>]>
+  resource: z.ZodArray<z.ZodString>
+}> = z.object({
   action: z.string().or(z.array(z.string())),
   resource: z.array(z.string()),
 })
