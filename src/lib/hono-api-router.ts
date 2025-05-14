@@ -33,72 +33,72 @@ export class HonoApiRouter {
   }
 
   public get<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("get", path, inOptions)
   }
 
   public post<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("post", path, inOptions)
   }
 
   public patch<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("patch", path, inOptions)
   }
 
   public put<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("put", path, inOptions)
   }
 
   public delete<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
     return this.route("delete", path, inOptions)
   }
 
   private route<
-    H extends z.ZodSchema = z.ZodNever,
-    P extends z.ZodSchema = z.ZodNever,
-    Q extends z.ZodSchema = z.ZodNever,
-    B extends z.ZodSchema = z.ZodNever,
-    R extends z.ZodSchema = z.ZodNever,
-    A = never,
+    H extends z.ZodSchema = z.ZodUndefined,
+    P extends z.ZodSchema = z.ZodUndefined,
+    Q extends z.ZodSchema = z.ZodUndefined,
+    B extends z.ZodSchema = z.ZodUndefined,
+    R extends z.ZodSchema = z.ZodUndefined,
+    A = undefined,
     Auth extends boolean = false,
   >(
     method: "get" | "post" | "put" | "delete" | "patch",
@@ -160,12 +160,12 @@ export class HonoApiRouter {
 }
 
 export interface RouteOptions<
-  H extends z.ZodSchema = z.ZodNever,
-  P extends z.ZodSchema = z.ZodNever,
-  Q extends z.ZodSchema = z.ZodNever,
-  B extends z.ZodSchema = z.ZodNever,
-  R extends z.ZodSchema = z.ZodNever,
-  A = never,
+  H extends z.ZodSchema = z.ZodUndefined,
+  P extends z.ZodSchema = z.ZodUndefined,
+  Q extends z.ZodSchema = z.ZodUndefined,
+  B extends z.ZodSchema = z.ZodUndefined,
+  R extends z.ZodSchema = z.ZodUndefined,
+  A = undefined,
   Auth extends boolean | undefined = false,
 > extends Omit<RouteConfig, "method" | "path" | "request" | "responses"> {
   input?: {
@@ -181,27 +181,27 @@ export interface RouteOptions<
     mode?: "tenant" | "tenantId"
     allowFlowcoreAdmin?: boolean
     resource?: (input: {
-      headers: H extends z.ZodSchema ? z.infer<H> : never
-      params: P extends z.ZodSchema ? z.infer<P> : never
-      query: Q extends z.ZodSchema ? z.infer<Q> : never
-      body: B extends z.ZodSchema ? z.infer<B> : never
+      headers: H extends z.ZodSchema ? z.infer<H> : undefined
+      params: P extends z.ZodSchema ? z.infer<P> : undefined
+      query: Q extends z.ZodSchema ? z.infer<Q> : undefined
+      body: B extends z.ZodSchema ? z.infer<B> : undefined
       auth: Auth extends true ? MaybeAuthenticated : Authenticated
     }) => Promise<A>
     permissions?: (input: {
-      headers: H extends z.ZodSchema ? z.infer<H> : never
-      params: P extends z.ZodSchema ? z.infer<P> : never
-      query: Q extends z.ZodSchema ? z.infer<Q> : never
-      body: B extends z.ZodSchema ? z.infer<B> : never
+      headers: H extends z.ZodSchema ? z.infer<H> : undefined
+      params: P extends z.ZodSchema ? z.infer<P> : undefined
+      query: Q extends z.ZodSchema ? z.infer<Q> : undefined
+      body: B extends z.ZodSchema ? z.infer<B> : undefined
       auth: Auth extends true ? MaybeAuthenticated : Authenticated
       resource: A
     }) => AuthorizePayload[]
   }
   handler: (input: {
-    headers: H extends z.ZodSchema ? z.infer<H> : never
-    params: P extends z.ZodSchema ? z.infer<P> : never
-    query: Q extends z.ZodSchema ? z.infer<Q> : never
-    body: B extends z.ZodSchema ? z.infer<B> : never
+    headers: H extends z.ZodSchema ? z.infer<H> : undefined
+    params: P extends z.ZodSchema ? z.infer<P> : undefined
+    query: Q extends z.ZodSchema ? z.infer<Q> : undefined
+    body: B extends z.ZodSchema ? z.infer<B> : undefined
     auth: Auth extends true ? MaybeAuthenticated : Authenticated
     resource: A
-  }) => R extends z.ZodNever ? null : Promise<z.infer<R>> | z.infer<R>
+  }) => R extends z.ZodUndefined ? (Promise<null> | null) : (Promise<z.infer<R>> | z.infer<R>)
 }
