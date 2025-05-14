@@ -266,7 +266,7 @@ export class HonoApi {
           resource: resource as A,
         })
 
-        if (response === undefined) {
+        if (response === null) {
           c.status(201)
           return c.text("")
         }
