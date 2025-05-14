@@ -1,4 +1,5 @@
 import { z } from "@hono/zod-openapi"
+import { AuthorizePayloadSchema, AuthorizeValidPoliciesSchema } from "../auth/authorize.ts"
 
 export const defaultResponses = {
   400: {
@@ -43,6 +44,8 @@ export const defaultResponses = {
             status: z.literal(403).openapi({ example: 403 }),
             code: z.literal("FORBIDDEN").openapi({ example: "FORBIDDEN" }),
             message: z.string().openapi({ example: "Forbidden" }),
+            validPolicies: z.array(AuthorizeValidPoliciesSchema).optional(),
+            invalidRequest: z.array(AuthorizePayloadSchema).optional(),
           })
           .openapi("Response 403"),
       },

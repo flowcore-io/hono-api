@@ -1,3 +1,4 @@
+import { z } from "@hono/zod-openapi"
 import type { Logger } from "../types/types.ts"
 import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
 import type { Authenticated } from "./authenticate.ts"
@@ -7,10 +8,29 @@ const authCache = new AuthCache({
   ttlMs: 300_000,
 })
 
-export interface AuthorizePayload {
-  action: string | string[]
-  resource: string[]
-}
+export const AuthorizeValidPoliciesSchema = z.object({
+  policyFrn: z.string(),
+  statementId: z.string(),
+})
+  .openapi("AuthorizeValidPolicy", {
+    example: {
+      policyFrn: "frn::tenant:policy",
+      statementId: "123",
+    },
+  })
+
+export const AuthorizePayloadSchema = z.object({
+  action: z.string().or(z.array(z.string())),
+  resource: z.array(z.string()),
+})
+  .openapi("AuthorizePayload", {
+    example: {
+      action: "read",
+      resource: ["frn::tenant:resource"],
+    },
+  })
+
+export type AuthorizePayload = z.infer<typeof AuthorizePayloadSchema>
 
 interface IamValidationResponseValid {
   valid: true
@@ -20,6 +40,8 @@ interface IamValidationResponseValid {
 
 interface IamValidationResponseInvalid {
   valid: false
+  status?: number
+  message?: string
   invalidRequest: AuthorizePayload[]
   validPolicies: { policyFrn: string; statementId: string }[]
 }
@@ -68,6 +90,10 @@ export async function authorize(
     options.logger.debug(`IAM validation passed for ${options.type} ${auth.id} with checksum ${data.checksum}`)
   } else {
     options.logger.info("IAM validation failed", { data })
-    throw new AppExceptionForbidden("IAM validation failed", data.validPolicies, data.invalidRequest)
+    throw new AppExceptionForbidden(
+      data.message?.trim() || "IAM validation failed",
+      data.validPolicies,
+      data.invalidRequest,
+    )
   }
 }

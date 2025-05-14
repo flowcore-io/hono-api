@@ -2,7 +2,12 @@ import type { Context, Env } from "hono"
 import { Scalar } from "@scalar/hono-api-reference"
 import { createRoute, OpenAPIHono, type RouteConfig, type z } from "@hono/zod-openapi"
 import type { HonoApiRouter, RouteOptions } from "./hono-api-router.ts"
-import { AppException, AppExceptionBadRequest, AppExceptionUnauthorized } from "../exceptions/app-exceptions.ts"
+import {
+  AppException,
+  AppExceptionBadRequest,
+  AppExceptionForbidden,
+  AppExceptionUnauthorized,
+} from "../exceptions/app-exceptions.ts"
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
 import { authorize } from "../auth/authorize.ts"
 import type { Logger } from "../types/types.ts"
@@ -117,29 +122,51 @@ export class HonoApi {
   }
 
   private errorHandler(error: Error, c: Context) {
-    if (error instanceof AppException) {
+    if (!(error instanceof AppException)) {
+      this.logger.error(error, {
+        path: c.req.path,
+        method: c.req.method,
+      })
+      return c.json(
+        {
+          status: 500,
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Internal server error",
+        },
+        500,
+      )
+    }
+    if (error instanceof AppExceptionBadRequest) {
       return c.json(
         {
           status: error.status,
           code: error.code,
           message: error.message,
-          in: (error as AppExceptionBadRequest).in,
-          errors: (error as AppExceptionBadRequest).errors,
+          in: error.in,
+          errors: error.errors,
         },
         error.status,
       )
     }
-    this.logger.error(error, {
-      path: c.req.path,
-      method: c.req.method,
-    })
+    if (error instanceof AppExceptionForbidden) {
+      return c.json(
+        {
+          status: error.status,
+          code: error.code,
+          message: error.message,
+          validPolicies: error.validPolicies,
+          invalidRequest: error.invalidRequest,
+        },
+        error.status,
+      )
+    }
     return c.json(
       {
-        status: 500,
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Internal server error",
+        status: error.status,
+        code: error.code,
+        message: error.message,
       },
-      500,
+      error.status,
     )
   }
 
