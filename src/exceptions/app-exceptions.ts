@@ -2,8 +2,19 @@ import type { ZodError } from "zod"
 import type { AuthorizePayload } from "./../auth/authorize.ts"
 
 export abstract class AppException extends Error {
-  public abstract readonly status: 400 | 401 | 403 | 404 | 500
+  public abstract readonly status: 400 | 401 | 403 | 404 | 409 | 500
   public abstract readonly code: string
+}
+
+export class AppExceptionInternalServerError extends AppException {
+  public readonly status = 500
+  public readonly code = "INTERNAL_SERVER_ERROR"
+  public readonly originalError?: Error
+
+  constructor(originalError?: Error) {
+    super("Internal Server Error", { cause: originalError })
+    this.originalError = originalError
+  }
 }
 
 export class AppExceptionNotFound extends AppException {
@@ -59,5 +70,14 @@ export class AppExceptionBadRequest extends AppException {
         {} as Record<string, string>,
       )
     }
+  }
+}
+
+export class AppExceptionConflict extends AppException {
+  public readonly status = 409
+  public readonly code = "CONFLICT"
+
+  constructor(message?: string) {
+    super(message ?? "Conflict")
   }
 }
