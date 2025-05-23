@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.12](https://github.com/flowcore-io/hono-api/compare/v0.0.11...v0.0.12) (2025-05-23)
+
+
+### Bug Fixes
+
+* add some more exceptions ([73c7b04](https://github.com/flowcore-io/hono-api/commit/73c7b04a71a8b3c45e3557e9e8cb1456768b9d1b))
+
 ## [0.0.11](https://github.com/flowcore-io/hono-api/compare/v0.0.10...v0.0.11) (2025-05-23)
 
 
