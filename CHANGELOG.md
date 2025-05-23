@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.11](https://github.com/flowcore-io/hono-api/compare/v0.0.10...v0.0.11) (2025-05-23)
+
+
+### Bug Fixes
+
+* export exceptions ([5919ca4](https://github.com/flowcore-io/hono-api/commit/5919ca4e3c203a914e109b93eb4e89cfa948ea9d))
+
 ## [0.0.10](https://github.com/flowcore-io/hono-api/compare/v0.0.9...v0.0.10) (2025-05-14)
 
 
