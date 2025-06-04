@@ -18,6 +18,7 @@ export interface AuthenticatedUser {
 export interface AuthenticatedApiKey {
   type: "apiKey"
   id: string
+  isFlowcoreAdmin: boolean
 }
 
 export type Authenticated = AuthenticatedUser | AuthenticatedApiKey
@@ -84,6 +85,7 @@ export async function authenticate(
     return {
       type: "apiKey",
       id: result.keyId,
+      isFlowcoreAdmin: false,
     }
   }
 
