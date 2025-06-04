@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.13](https://github.com/flowcore-io/hono-api/compare/v0.0.12...v0.0.13) (2025-06-04)
+
+
+### Bug Fixes
+
+* export types ([22c0e7d](https://github.com/flowcore-io/hono-api/commit/22c0e7d172de03596ba9e3dd6ca318c7f781be82))
+
 ## [0.0.12](https://github.com/flowcore-io/hono-api/compare/v0.0.11...v0.0.12) (2025-05-23)
 
 
