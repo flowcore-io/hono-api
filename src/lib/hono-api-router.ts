@@ -4,6 +4,7 @@ import { defaultHeaders } from "./../defaults/default-headers.ts"
 import { defaultResponses } from "./../defaults/default-responses.ts"
 import type { AuthType } from "./../types/types.ts"
 import type { AuthorizePayload } from "./../auth/authorize.ts"
+import type { Context } from "hono"
 
 export class HonoApiRouter {
   public readonly basePath: string
@@ -203,5 +204,6 @@ export interface RouteOptions<
     body: B extends z.ZodSchema ? z.infer<B> : undefined
     auth: Auth extends true ? MaybeAuthenticated : Authenticated
     resource: A
+    context: Context
   }) => R extends z.ZodUndefined ? (Promise<null> | null) : (Promise<z.infer<R>> | z.infer<R>)
 }

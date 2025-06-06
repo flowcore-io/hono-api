@@ -263,6 +263,7 @@ export class HonoApi {
           body: body as B extends z.ZodSchema ? z.infer<B> : never,
           auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
           resource: resource as A,
+          context: c,
         })
 
         if (response === null) {
