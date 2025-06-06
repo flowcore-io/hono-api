@@ -101,7 +101,7 @@ export class HonoApi {
       ...route,
       routeConfig: {
         ...route.routeConfig,
-        path: (path + route.routeConfig.path).replace(/\/\//g, "/"),
+        path: (path + route.routeConfig.path).replace(/\/\//g, "/").replace(/\/$/, ""),
       },
     }))
     for (const route of routes) {
