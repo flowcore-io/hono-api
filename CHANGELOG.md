@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.14](https://github.com/flowcore-io/hono-api/compare/v0.0.13...v0.0.14) (2025-06-06)
+
+
+### Bug Fixes
+
+* add hono context to route handler ([c29f97e](https://github.com/flowcore-io/hono-api/commit/c29f97efa20fa636f13a062088d45ffd15f6cfd8))
+
 ## [0.0.13](https://github.com/flowcore-io/hono-api/compare/v0.0.12...v0.0.13) (2025-06-04)
 
 
