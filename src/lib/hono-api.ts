@@ -48,6 +48,10 @@ export class HonoApi {
   }
 
   constructor(options: HonoApiOptions) {
+    if (options.logger) {
+      this.logger = options.logger
+    }
+
     // Initialize the auth cache
     void getAuthCache(this.logger)
 
@@ -63,9 +67,6 @@ export class HonoApi {
         ...options.openapi,
       }
     }
-    if (options.logger) {
-      this.logger = options.logger
-    }
 
     this.app = new OpenAPIHono({
       defaultHook: (result) => {
@@ -74,8 +75,8 @@ export class HonoApi {
         }
       },
     })
-    this.app.notFound(this.notFoundHandler)
-    this.app.onError(this.errorHandler)
+    this.app.notFound(this.notFoundHandler.bind(this))
+    this.app.onError(this.errorHandler.bind(this))
 
     this.app.doc(this.openapiOptions.jsonPath, {
       openapi: "3.1.0",
