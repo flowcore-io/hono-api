@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.16](https://github.com/flowcore-io/hono-api/compare/v0.0.15...v0.0.16) (2025-06-06)
+
+
+### Bug Fixes
+
+* remove trailing slash when adding route ([c819795](https://github.com/flowcore-io/hono-api/commit/c819795239fb7df1124375e34a49f501344fe8bb))
+
 ## [0.0.15](https://github.com/flowcore-io/hono-api/compare/v0.0.14...v0.0.15) (2025-06-06)
 
 
