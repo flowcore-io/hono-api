@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.15](https://github.com/flowcore-io/hono-api/compare/v0.0.14...v0.0.15) (2025-06-06)
+
+
+### Bug Fixes
+
+* bind ([6d7d61a](https://github.com/flowcore-io/hono-api/commit/6d7d61a9f65c0594e32447761882eabd61b3f44a))
+
 ## [0.0.14](https://github.com/flowcore-io/hono-api/compare/v0.0.13...v0.0.14) (2025-06-06)
 
 
