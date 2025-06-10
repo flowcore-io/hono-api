@@ -49,7 +49,9 @@ interface LoggerFactoryOptions {
   logLevel: LogLevel
 }
 
-export function loggerFactory(options: LoggerFactoryOptions) {
+export function loggerFactory(options: LoggerFactoryOptions): {
+  createLogger: (label?: string) => Logger
+} {
   return {
     createLogger: (label?: string): Logger => {
       const winstonFormat = options.prettyPrintLogs
