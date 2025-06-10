@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.19](https://github.com/flowcore-io/hono-api/compare/v0.0.18...v0.0.19) (2025-06-10)
+
+
+### Bug Fixes
+
+* add custom zod types ([c22f7a8](https://github.com/flowcore-io/hono-api/commit/c22f7a8d248f9480984e18143e07db10b2b15540))
+* add return type to zBooleanString ([0b2e597](https://github.com/flowcore-io/hono-api/commit/0b2e597d624c37535a60f132bdc1c255791181ec))
+* add zodBooleanString type ([42b597a](https://github.com/flowcore-io/hono-api/commit/42b597a10b4682ef666095b74bd7fa1d663f67fa))
+* make zBooleanString case insensitive ([9dfcd1b](https://github.com/flowcore-io/hono-api/commit/9dfcd1bbef7a9b157bc6129db7c2583f9226fc83))
+
 ## [0.0.18](https://github.com/flowcore-io/hono-api/compare/v0.0.17...v0.0.18) (2025-06-10)
 
 
