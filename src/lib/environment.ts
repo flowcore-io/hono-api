@@ -39,7 +39,7 @@ export class Environment<T extends z.ZodObject<z.ZodRawShape>> {
   }
 }
 
-export const zBooleanString = z.string().transform((value) => {
+export const zBooleanString: z.ZodEffects<z.ZodString, boolean, string> = z.string().transform((value) => {
   if (value.toLowerCase() === "true") {
     return true
   } else if (value.toLowerCase() === "false") {
