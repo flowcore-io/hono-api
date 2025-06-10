@@ -1,4 +1,4 @@
-import { z } from "zod"
+import type { z } from "zod"
 import process from "node:process"
 
 export enum NodeEnv {
@@ -38,13 +38,3 @@ export class Environment<T extends z.ZodObject<z.ZodRawShape>> {
     return this._env as z.infer<T>
   }
 }
-
-export const zBooleanString: z.ZodEffects<z.ZodString, boolean, string> = z.string().transform((value) => {
-  if (value.toLowerCase() === "true") {
-    return true
-  } else if (value.toLowerCase() === "false") {
-    return false
-  } else {
-    throw new Error(`The string must be 'true' or 'false', got ${value}`)
-  }
-})
