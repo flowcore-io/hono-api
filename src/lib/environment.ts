@@ -40,9 +40,9 @@ export class Environment<T extends z.ZodObject<z.ZodRawShape>> {
 }
 
 export const zBooleanString = z.string().transform((value) => {
-  if (value === "true") {
+  if (value.toLowerCase() === "true") {
     return true
-  } else if (value === "false") {
+  } else if (value.toLowerCase() === "false") {
     return false
   } else {
     throw new Error(`The string must be 'true' or 'false', got ${value}`)
