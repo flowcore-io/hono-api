@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.18](https://github.com/flowcore-io/hono-api/compare/v0.0.17...v0.0.18) (2025-06-10)
+
+
+### Bug Fixes
+
+* add returntype to logger factory ([ae56105](https://github.com/flowcore-io/hono-api/commit/ae5610526bc258947b4854c30469dda8d3aa7bf7))
+* export logger ([4d7efe1](https://github.com/flowcore-io/hono-api/commit/4d7efe155fe7f97fd7f20e9c5ce3d707bbf5b9b1))
+
 ## [0.0.17](https://github.com/flowcore-io/hono-api/compare/v0.0.16...v0.0.17) (2025-06-10)
 
 
