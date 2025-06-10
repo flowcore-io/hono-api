@@ -210,6 +210,10 @@ export class HonoApi {
           ? ((await c.req.json()) as B extends z.ZodSchema ? z.infer<B> : never)
           : undefined
 
+        if (inOptions.input?.body && !c.req.header("Content-Type")?.includes("application/json")) {
+          throw new AppExceptionBadRequest(undefined, undefined, "Content-Type must be application/json")
+        }
+
         const user = await authenticate(
           this.logger,
           this.authOptions.jwks_url,
