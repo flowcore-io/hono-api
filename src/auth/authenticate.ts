@@ -1,6 +1,7 @@
 import { createRemoteJWKSet, type JWTPayload, jwtVerify } from "jose"
 import { AppExceptionUnauthorized } from "./../exceptions/app-exceptions.ts"
-import { AuthType, type Logger } from "./../types/types.ts"
+import { AuthType } from "./../types/types.ts"
+import type { Logger } from "../lib/logger.ts"
 
 export type FlowcoreJWTPayload = JWTPayload & {
   flowcore_user_id: string

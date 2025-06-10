@@ -1,7 +1,7 @@
 import type { BunSqliteKeyValue } from "bun-sqlite-key-value"
 import * as xxHash from "@jabr/xxhash64"
 import process from "node:process"
-import type { Logger } from "../types/types.ts"
+import type { Logger } from "../lib/logger.ts"
 
 interface AuthCacheOptions {
   ttlMs: number

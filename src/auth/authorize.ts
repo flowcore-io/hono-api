@@ -1,5 +1,5 @@
 import { z } from "@hono/zod-openapi"
-import type { Logger } from "../types/types.ts"
+import type { Logger } from "../lib/logger.ts"
 import { AppExceptionForbidden } from "./../exceptions/app-exceptions.ts"
 import type { Authenticated } from "./authenticate.ts"
 import { AuthCache } from "./cache.ts"

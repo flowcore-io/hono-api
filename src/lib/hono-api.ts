@@ -10,7 +10,7 @@ import {
 } from "../exceptions/app-exceptions.ts"
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
 import { authorize, getAuthCache } from "../auth/authorize.ts"
-import type { Logger } from "../types/types.ts"
+import type { Logger } from "../lib/logger.ts"
 
 export interface HonoApiOptions {
   auth?: {
