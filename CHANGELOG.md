@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.20](https://github.com/flowcore-io/hono-api/compare/v0.0.19...v0.0.20) (2025-06-10)
+
+
+### Bug Fixes
+
+* check that body is json ([ca6c7f9](https://github.com/flowcore-io/hono-api/commit/ca6c7f9da382605c815784820d7e39f9a13417f3))
+
 ## [0.0.19](https://github.com/flowcore-io/hono-api/compare/v0.0.18...v0.0.19) (2025-06-10)
 
 
