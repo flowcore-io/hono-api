@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import type { RouteConfig, z } from "@hono/zod-openapi"
 import type { Authenticated, MaybeAuthenticated } from "./../auth/authenticate.ts"
 import { defaultHeaders } from "./../defaults/default-headers.ts"
@@ -5,24 +6,31 @@ import { defaultResponses } from "./../defaults/default-responses.ts"
 import type { AuthType } from "./../types/types.ts"
 import type { AuthorizePayload } from "./../auth/authorize.ts"
 import type { Context } from "hono"
+import type { PathwaysBuilder } from "jsr:@flowcore/pathways"
 
-export class HonoApiRouter {
+export class HonoApiRouter<PW extends PathwaysBuilder<any, any> = never> {
   public readonly basePath: string
+  public pathways?: PathwaysBuilder<any, any>
 
   private readonly routes: {
     routeConfig: RouteConfig
-    // deno-lint-ignore no-explicit-any
-    inOptions: RouteOptions<any, any, any, any, any, any, any>
+    inOptions: RouteOptions<any, any, any, any, any, any, any, any>
+    pathways: PW
   }[] = []
 
   constructor(basePath?: string) {
     this.basePath = basePath ?? "/"
   }
 
+  public withPathways<U extends PathwaysBuilder<any, any>>(obj: U): HonoApiRouter<U> {
+    this.pathways = obj
+    return this as unknown as HonoApiRouter<U>
+  }
+
   public getRoutes(): {
     routeConfig: RouteConfig
-    // deno-lint-ignore no-explicit-any
-    inOptions: RouteOptions<any, any, any, any, any, any, any>
+    inOptions: RouteOptions<any, any, any, any, any, any, any, any>
+    pathways: PW
   }[] {
     return this.routes.map((route) => ({
       routeConfig: {
@@ -30,6 +38,7 @@ export class HonoApiRouter {
         path: (this.basePath + route.routeConfig.path).replace(/\/\//g, "/"),
       },
       inOptions: route.inOptions,
+      pathways: route.pathways,
     }))
   }
 
@@ -41,7 +50,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>): HonoApiRouter<PW> {
     return this.route("get", path, inOptions)
   }
 
@@ -53,7 +62,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>): HonoApiRouter<PW> {
     return this.route("post", path, inOptions)
   }
 
@@ -65,7 +74,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>): HonoApiRouter<PW> {
     return this.route("patch", path, inOptions)
   }
 
@@ -77,7 +86,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>): HonoApiRouter<PW> {
     return this.route("put", path, inOptions)
   }
 
@@ -89,7 +98,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>): HonoApiRouter<PW> {
     return this.route("delete", path, inOptions)
   }
 
@@ -101,11 +110,12 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
+    PW extends PathwaysBuilder<any, any> = never,
   >(
     method: "get" | "post" | "put" | "delete" | "patch",
     path: string,
-    inOptions: RouteOptions<H, P, Q, B, R, A, Auth>,
-  ): HonoApiRouter {
+    inOptions: RouteOptions<H, P, Q, B, R, A, Auth, PW>,
+  ): HonoApiRouter<PW> {
     const options = {
       method,
       path,
@@ -155,8 +165,12 @@ export class HonoApiRouter {
       }
     }
 
-    this.routes.push({ routeConfig: options, inOptions })
-    return this
+    this.routes.push({
+      routeConfig: options,
+      inOptions,
+      pathways: this.pathways as any,
+    })
+    return this as unknown as HonoApiRouter<PW>
   }
 }
 
@@ -168,6 +182,7 @@ export interface RouteOptions<
   R extends z.ZodSchema = z.ZodUndefined,
   A = undefined,
   Auth extends boolean | undefined = false,
+  PW extends PathwaysBuilder<any, any> = never,
 > extends Omit<RouteConfig, "method" | "path" | "request" | "responses"> {
   input?: {
     headers?: H
@@ -205,5 +220,6 @@ export interface RouteOptions<
     auth: Auth extends true ? MaybeAuthenticated : Authenticated
     resource: A
     context: Context
+    pathways: PW
   }) => R extends z.ZodUndefined ? (Promise<null> | null) : (Promise<z.infer<R>> | z.infer<R>)
 }
