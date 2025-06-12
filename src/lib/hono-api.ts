@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import type { Context, Env } from "hono"
 import { Scalar } from "@scalar/hono-api-reference"
 import { createRoute, OpenAPIHono, type RouteConfig, type z } from "@hono/zod-openapi"
@@ -11,6 +12,7 @@ import {
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
 import { authorize, getAuthCache } from "../auth/authorize.ts"
 import type { Logger } from "../lib/logger.ts"
+import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways"
 
 export interface HonoApiOptions {
   auth?: {
@@ -26,6 +28,7 @@ export interface HonoApiOptions {
     description?: string
   }
   logger?: Logger
+  pathways?: PathwaysBuilder
 }
 
 export class HonoApi {
@@ -96,7 +99,7 @@ export class HonoApi {
     )
   }
 
-  public addRouter(path: string, router: HonoApiRouter) {
+  public addRouter(path: string, router: HonoApiRouter<any>) {
     const routes = router.getRoutes().map((route) => ({
       ...route,
       routeConfig: {
@@ -108,8 +111,9 @@ export class HonoApi {
       this.logger.debug("Adding route", {
         method: route.routeConfig.method,
         path: route.routeConfig.path,
+        pathways: !!route.pathways,
       })
-      this.addRoute(this.app, route.routeConfig, route.inOptions)
+      this.addRoute(this.app, route.routeConfig, route.inOptions, route.pathways)
     }
   }
 
@@ -181,7 +185,12 @@ export class HonoApi {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(app: OpenAPIHono, routeConfig: RouteConfig, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>) {
+  >(
+    app: OpenAPIHono,
+    routeConfig: RouteConfig,
+    inOptions: RouteOptions<H, P, Q, B, R, A, Auth, any>,
+    pathways?: PathwaysBuilder<any, any>,
+  ) {
     const route = createRoute(routeConfig)
     app.openapi(
       route,
@@ -261,6 +270,16 @@ export class HonoApi {
           throw new AppExceptionUnauthorized()
         }
 
+        let handlerPathways = pathways ? new SessionPathwayBuilder(pathways) : undefined
+        if (handlerPathways && user?.id) {
+          handlerPathways = handlerPathways.withUserResolver(() =>
+            Promise.resolve({
+              entityId: user.id,
+              entityType: user.type === "apiKey" ? "key" : "user",
+            })
+          )
+        }
+
         const response = await inOptions.handler({
           headers,
           params,
@@ -269,6 +288,7 @@ export class HonoApi {
           auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
           resource: resource as A,
           context: c,
+          pathways: handlerPathways as any,
         })
 
         if (response === null) {

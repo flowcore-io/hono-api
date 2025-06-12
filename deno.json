@@ -24,7 +24,7 @@
     "hono": "npm:hono@^4.7.9",
     "jose": "npm:jose@^6.0.11",
     "winston": "npm:winston@^3.17.0",
-    "zod": "npm:zod@^3.24.4"
+    "zod": "npm:zod@^3.25.23"
   },
   "fmt": {
     "exclude": [
