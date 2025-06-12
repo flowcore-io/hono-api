@@ -109,7 +109,7 @@ export class HonoApi {
         method: route.routeConfig.method,
         path: route.routeConfig.path,
       })
-      this.addRoute(this.app, route.routeConfig, route.inOptions)
+      this.addRoute(this.app, route.routeConfig, route.inOptions, route.getContextData)
     }
   }
 
@@ -181,7 +181,15 @@ export class HonoApi {
     R extends z.ZodSchema = z.ZodNever,
     A = never,
     Auth extends boolean = false,
-  >(app: OpenAPIHono, routeConfig: RouteConfig, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>) {
+    D extends Record<string, unknown> = Record<string, never>,
+  >(
+    app: OpenAPIHono,
+    routeConfig: RouteConfig,
+    inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>,
+    getContextData?: (
+      input: { auth: MaybeAuthenticated; context: Context },
+    ) => Record<string, unknown> | Promise<Record<string, unknown>>,
+  ) {
     const route = createRoute(routeConfig)
     app.openapi(
       route,
@@ -261,6 +269,11 @@ export class HonoApi {
           throw new AppExceptionUnauthorized()
         }
 
+        const contextData = await getContextData?.({
+          auth: user,
+          context: c,
+        })
+
         const response = await inOptions.handler({
           headers,
           params,
@@ -269,6 +282,8 @@ export class HonoApi {
           auth: user as Auth extends true ? MaybeAuthenticated : Authenticated,
           resource: resource as A,
           context: c,
+          // deno-lint-ignore no-explicit-any
+          contextData: contextData as any,
         })
 
         if (response === null) {

@@ -6,23 +6,39 @@ import type { AuthType } from "./../types/types.ts"
 import type { AuthorizePayload } from "./../auth/authorize.ts"
 import type { Context } from "hono"
 
-export class HonoApiRouter {
+export class HonoApiRouter<D extends Record<string, unknown> = never> {
   public readonly basePath: string
+  public getContextData?: (
+    input: { auth: MaybeAuthenticated; context: Context },
+  ) => Record<string, unknown> | Promise<Record<string, unknown>>
 
   private readonly routes: {
     routeConfig: RouteConfig
     // deno-lint-ignore no-explicit-any
-    inOptions: RouteOptions<any, any, any, any, any, any, any>
+    inOptions: RouteOptions<any, any, any, any, any, any, any, any>
   }[] = []
 
   constructor(basePath?: string) {
     this.basePath = basePath ?? "/"
   }
 
+  public withContextData<U extends Record<string, unknown>>(
+    getContextData: (input: {
+      auth: MaybeAuthenticated
+      context: Context
+    }) => U | Promise<U>,
+  ): HonoApiRouter<U> {
+    this.getContextData = getContextData
+    return this as unknown as HonoApiRouter<U>
+  }
+
   public getRoutes(): {
     routeConfig: RouteConfig
     // deno-lint-ignore no-explicit-any
-    inOptions: RouteOptions<any, any, any, any, any, any, any>
+    inOptions: RouteOptions<any, any, any, any, any, any, any, any>
+    getContextData?: (
+      input: { auth: MaybeAuthenticated; context: Context },
+    ) => Record<string, unknown> | Promise<Record<string, unknown>>
   }[] {
     return this.routes.map((route) => ({
       routeConfig: {
@@ -30,6 +46,7 @@ export class HonoApiRouter {
         path: (this.basePath + route.routeConfig.path).replace(/\/\//g, "/"),
       },
       inOptions: route.inOptions,
+      getContextData: this.getContextData,
     }))
   }
 
@@ -41,7 +58,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>): HonoApiRouter<D> {
     return this.route("get", path, inOptions)
   }
 
@@ -53,7 +70,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>): HonoApiRouter<D> {
     return this.route("post", path, inOptions)
   }
 
@@ -65,7 +82,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>): HonoApiRouter<D> {
     return this.route("patch", path, inOptions)
   }
 
@@ -77,7 +94,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>): HonoApiRouter<D> {
     return this.route("put", path, inOptions)
   }
 
@@ -89,7 +106,7 @@ export class HonoApiRouter {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth>): HonoApiRouter {
+  >(path: string, inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>): HonoApiRouter<D> {
     return this.route("delete", path, inOptions)
   }
 
@@ -104,8 +121,8 @@ export class HonoApiRouter {
   >(
     method: "get" | "post" | "put" | "delete" | "patch",
     path: string,
-    inOptions: RouteOptions<H, P, Q, B, R, A, Auth>,
-  ): HonoApiRouter {
+    inOptions: RouteOptions<H, P, Q, B, R, A, Auth, D>,
+  ): HonoApiRouter<D> {
     const options = {
       method,
       path,
@@ -168,6 +185,7 @@ export interface RouteOptions<
   R extends z.ZodSchema = z.ZodUndefined,
   A = undefined,
   Auth extends boolean | undefined = false,
+  D extends Record<string, unknown> = never,
 > extends Omit<RouteConfig, "method" | "path" | "request" | "responses"> {
   input?: {
     headers?: H
@@ -205,5 +223,6 @@ export interface RouteOptions<
     auth: Auth extends true ? MaybeAuthenticated : Authenticated
     resource: A
     context: Context
+    contextData: D
   }) => R extends z.ZodUndefined ? (Promise<null> | null) : (Promise<z.infer<R>> | z.infer<R>)
 }
