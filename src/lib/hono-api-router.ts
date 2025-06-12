@@ -8,7 +8,7 @@ import type { AuthorizePayload } from "./../auth/authorize.ts"
 import type { Context } from "hono"
 import type { PathwaysBuilder } from "npm:@flowcore/pathways@^0.16.2"
 
-export class HonoApiRouter<PW extends PathwaysBuilder<any, any> = never> {
+export class HonoApiRouter<PW extends PathwaysBuilder<any, any> | undefined = undefined> {
   public readonly basePath: string
   public pathways?: PathwaysBuilder<any, any>
 
@@ -110,7 +110,7 @@ export class HonoApiRouter<PW extends PathwaysBuilder<any, any> = never> {
     R extends z.ZodSchema = z.ZodUndefined,
     A = undefined,
     Auth extends boolean = false,
-    PW extends PathwaysBuilder<any, any> = never,
+    PW extends PathwaysBuilder<any, any> | undefined = undefined,
   >(
     method: "get" | "post" | "put" | "delete" | "patch",
     path: string,
@@ -182,7 +182,7 @@ export interface RouteOptions<
   R extends z.ZodSchema = z.ZodUndefined,
   A = undefined,
   Auth extends boolean | undefined = false,
-  PW extends PathwaysBuilder<any, any> = never,
+  PW extends PathwaysBuilder<any, any> | undefined = undefined,
 > extends Omit<RouteConfig, "method" | "path" | "request" | "responses"> {
   input?: {
     headers?: H
