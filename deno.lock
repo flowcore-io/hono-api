@@ -42,8 +42,7 @@
     "npm:postgres@^3.4.3": "3.4.7",
     "npm:rxjs@^7.8.1": "7.8.2",
     "npm:winston@^3.17.0": "3.17.0",
-    "npm:zod@^3.25.23": "3.25.49",
-    "npm:zod@^3.25.61": "3.25.61"
+    "npm:zod@^3.25.23": "3.25.49"
   },
   "jsr": {
     "@david/code-block-writer@13.0.3": {
@@ -78,7 +77,7 @@
         "npm:node-cache",
         "npm:postgres",
         "npm:rxjs",
-        "npm:zod@^3.25.23"
+        "npm:zod"
       ]
     },
     "@jabr/xxhash64@2.0.0": {
@@ -572,9 +571,6 @@
     },
     "zod@3.25.49": {
       "integrity": "sha512-JMMPMy9ZBk3XFEdbM3iL1brx4NUSejd6xr3ELrrGEfGb355gjhiAWtG3K5o+AViV/3ZfkIrCzXsZn6SbLwTR8Q=="
-    },
-    "zod@3.25.61": {
-      "integrity": "sha512-fzfJgUw78LTNnHujj9re1Ov/JJQkRZZGDMcYqSx7Hp4rPOkKywaFHq0S6GoHeXs0wGNE/sIOutkXgnwzrVOGCQ=="
     }
   },
   "workspace": {
@@ -588,7 +584,7 @@
       "npm:hono@^4.7.9",
       "npm:jose@^6.0.11",
       "npm:winston@^3.17.0",
-      "npm:zod@^3.25.61"
+      "npm:zod@^3.25.23"
     ]
   }
 }
