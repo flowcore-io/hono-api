@@ -16,7 +16,6 @@
     "build:npm": "deno run -A bin/build-npm.ts"
   },
   "imports": {
-    "@flowcore/pathways": "jsr:@flowcore/pathways@^0.16.1",
     "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.6",
     "@jabr/xxhash64": "jsr:@jabr/xxhash64@^2.0.0",
     "@scalar/hono-api-reference": "npm:@scalar/hono-api-reference@^0.8.9",

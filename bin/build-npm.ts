@@ -29,6 +29,10 @@ await build({
     dependencies: {
       "zod": undefined as unknown as string,
       "@flowcore/pathways": undefined as unknown as string,
+      "bun-sqlite-key-value": undefined as unknown as string,
+    },
+    optionalDependencies: {
+      "bun-sqlite-key-value": "1.13.1",
     },
     peerDependencies: {
       "zod": "^3.25.63",

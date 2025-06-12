@@ -1,4 +1,4 @@
-import type { BunSqliteKeyValue } from "bun-sqlite-key-value"
+import type { BunSqliteKeyValue } from "npm:bun-sqlite-key-value@1.13.1"
 import * as xxHash from "@jabr/xxhash64"
 import process from "node:process"
 import type { Logger } from "../lib/logger.ts"
@@ -28,7 +28,7 @@ export class AuthCache {
       return this.cache
     }
     if (this.isBun) {
-      const { BunSqliteKeyValue } = await import("bun-sqlite-key-value")
+      const { BunSqliteKeyValue } = await import("npm:bun-sqlite-key-value@1.13.1")
       this.cache = new BunSqliteKeyValue(":memory:", {
         ttlMs: this.options.ttlMs,
       })

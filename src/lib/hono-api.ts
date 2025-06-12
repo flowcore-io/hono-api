@@ -12,7 +12,7 @@ import {
 import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
 import { authorize, getAuthCache } from "../auth/authorize.ts"
 import type { Logger } from "../lib/logger.ts"
-import { type PathwaysBuilder, SessionPathwayBuilder } from "jsr:@flowcore/pathways"
+import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways"
 
 export interface HonoApiOptions {
   auth?: {
