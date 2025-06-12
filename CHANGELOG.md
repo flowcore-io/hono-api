@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.22](https://github.com/flowcore-io/hono-api/compare/v0.0.21...v0.0.22) (2025-06-12)
+
+
+### Bug Fixes
+
+* fix imports ([b5758ce](https://github.com/flowcore-io/hono-api/commit/b5758cea7ca14652d6ad6603660c96356b65127e))
+
 ## [0.0.21](https://github.com/flowcore-io/hono-api/compare/v0.0.20...v0.0.21) (2025-06-12)
 
 
