@@ -4,6 +4,7 @@
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
     "jsr:@deno/cache-dir@0.20": "0.20.0",
     "jsr:@deno/dnt@*": "0.42.1",
+    "jsr:@deno/graph@0.86": "0.86.9",
     "jsr:@flowcore/pathways@*": "0.16.1",
     "jsr:@flowcore/pathways@~0.16.1": "0.16.1",
     "jsr:@jabr/xxhash64@2": "2.0.0",
@@ -28,6 +29,7 @@
     "jsr:@ts-morph/bootstrap@0.25": "0.25.0",
     "jsr:@ts-morph/common@0.25": "0.25.0",
     "npm:@flowcore/data-pump@*": "0.15.0",
+    "npm:@flowcore/pathways@*": "0.16.1",
     "npm:@flowcore/sdk-transformer-core@^2.3.6": "2.5.1",
     "npm:@hono/zod-openapi@~0.19.6": "0.19.8_hono@4.7.9_zod@3.25.49",
     "npm:@scalar/hono-api-reference@~0.8.9": "0.8.9_hono@4.7.9",
@@ -51,6 +53,7 @@
     "@deno/cache-dir@0.20.0": {
       "integrity": "840a78d4294102ac9ba6be70e8c1bf2983d18de4ef022f2c1bb8f8aaaffada48",
       "dependencies": [
+        "jsr:@deno/graph",
         "jsr:@std/fmt@^1.0.3",
         "jsr:@std/fs@^1.0.6",
         "jsr:@std/io",
@@ -67,6 +70,9 @@
         "jsr:@std/path@1",
         "jsr:@ts-morph/bootstrap"
       ]
+    },
+    "@deno/graph@0.86.9": {
+      "integrity": "c4f353a695bcc5246c099602977dabc6534eacea9999a35a8cb24e807192e6a1"
     },
     "@flowcore/pathways@0.16.1": {
       "integrity": "9c0f18cc008887e3ab07b83736a6433d772ecefdfdfe06b986f9e2b858c93414",
@@ -195,6 +201,20 @@
         "prom-client",
         "rxjs",
         "ws"
+      ]
+    },
+    "@flowcore/pathways@0.16.1": {
+      "integrity": "sha512-HtwN4pmQIw6MR9IY6ybcbcF898dmzMhuIC41u8gYFttGQ/B78uG8rBNxp8uLtjmF/mbibkiJQTOxEcMsBZI1HQ==",
+      "dependencies": [
+        "@flowcore/sdk-transformer-core",
+        "file-type",
+        "node-cache",
+        "postgres",
+        "rxjs",
+        "zod@3.25.49"
+      ],
+      "optionalDependencies": [
+        "bun-sqlite-key-value"
       ]
     },
     "@flowcore/sdk-transformer-core@2.5.1": {
