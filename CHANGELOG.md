@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.23](https://github.com/flowcore-io/hono-api/compare/v0.0.22...v0.0.23) (2025-06-12)
+
+
+### Bug Fixes
+
+* make pathways type undefined when not set ([2a42f75](https://github.com/flowcore-io/hono-api/commit/2a42f756dfef8d54af18c215adca6ad564d08a51))
+
 ## [0.0.22](https://github.com/flowcore-io/hono-api/compare/v0.0.21...v0.0.22) (2025-06-12)
 
 
