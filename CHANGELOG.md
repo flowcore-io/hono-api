@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.21](https://github.com/flowcore-io/hono-api/compare/v0.0.20...v0.0.21) (2025-06-12)
+
+
+### Bug Fixes
+
+* add with pathways ([471a874](https://github.com/flowcore-io/hono-api/commit/471a874a398d7958ff99b80e68e9661f20ba6960))
+* fix dependencies ([5dd2139](https://github.com/flowcore-io/hono-api/commit/5dd21394a1b5a273da8bc7abe6d0e901d71cdffe))
+* make zod and pathways a peer dep in npm ([681e895](https://github.com/flowcore-io/hono-api/commit/681e895ac117476f3b810276bcb72771b427f775))
+* stuff ([acce56f](https://github.com/flowcore-io/hono-api/commit/acce56fde67ebae614ca4fea4ee947856291309f))
+
 ## [0.0.20](https://github.com/flowcore-io/hono-api/compare/v0.0.19...v0.0.20) (2025-06-10)
 
 
