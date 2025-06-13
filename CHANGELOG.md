@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.24](https://github.com/flowcore-io/hono-api/compare/v0.0.23...v0.0.24) (2025-06-13)
+
+
+### Bug Fixes
+
+* add prometheus ([9b2ea06](https://github.com/flowcore-io/hono-api/commit/9b2ea06b8a628eceddab0080de5b9276f80d6465))
+
 ## [0.0.23](https://github.com/flowcore-io/hono-api/compare/v0.0.22...v0.0.23) (2025-06-12)
 
 
