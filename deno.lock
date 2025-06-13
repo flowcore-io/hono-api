@@ -20,6 +20,7 @@
     "npm:@flowcore/pathways@*": "0.16.2_zod@3.25.63",
     "npm:@flowcore/pathways@0.16.2": "0.16.2_zod@3.25.63",
     "npm:@flowcore/pathways@~0.16.2": "0.16.2_zod@3.25.63",
+    "npm:@hono/prometheus@^1.0.2": "1.0.2_hono@4.7.11_prom-client@15.1.3",
     "npm:@hono/zod-openapi@~0.19.6": "0.19.8_hono@4.7.11_zod@3.25.63",
     "npm:@scalar/hono-api-reference@~0.8.9": "0.8.10_hono@4.7.11",
     "npm:@types/node@*": "22.15.15",
@@ -28,6 +29,7 @@
     "npm:bun-sqlite-key-value@^1.13.1": "1.13.1_typescript@5.8.3",
     "npm:hono@^4.7.9": "4.7.11",
     "npm:jose@^6.0.11": "6.0.11",
+    "npm:prom-client@^15.1.3": "15.1.3",
     "npm:winston@^3.17.0": "3.17.0",
     "npm:zod@^3.25.23": "3.25.63"
   },
@@ -158,6 +160,13 @@
       "dependencies": [
         "@sinclair/typebox",
         "radash"
+      ]
+    },
+    "@hono/prometheus@1.0.2_hono@4.7.11_prom-client@15.1.3": {
+      "integrity": "sha512-7z2nBMaiHEaAFfNWfIV2H5/HRezv9kLH0jDY6ZotQQAr3QR7cIYAd6FGiyTIng4GUAw6ZWeX3C0Y4QS36SLRjg==",
+      "dependencies": [
+        "hono",
+        "prom-client"
       ]
     },
     "@hono/zod-openapi@0.19.8_hono@4.7.11_zod@3.25.63": {
@@ -525,12 +534,14 @@
   "workspace": {
     "dependencies": [
       "jsr:@jabr/xxhash64@2",
+      "npm:@hono/prometheus@^1.0.2",
       "npm:@hono/zod-openapi@~0.19.6",
       "npm:@scalar/hono-api-reference@~0.8.9",
       "npm:@types/node@^22.15.29",
       "npm:bun-sqlite-key-value@^1.13.1",
       "npm:hono@^4.7.9",
       "npm:jose@^6.0.11",
+      "npm:prom-client@^15.1.3",
       "npm:winston@^3.17.0",
       "npm:zod@^3.25.23"
     ]

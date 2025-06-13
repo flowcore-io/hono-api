@@ -13,6 +13,8 @@ import { authenticate, type Authenticated, type MaybeAuthenticated } from "../au
 import { authorize, getAuthCache } from "../auth/authorize.ts"
 import type { Logger } from "../lib/logger.ts"
 import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
+import { prometheus } from "@hono/prometheus"
+import { Registry } from "prom-client"
 
 export interface HonoApiOptions {
   auth?: {
@@ -27,12 +29,14 @@ export interface HonoApiOptions {
     name?: string
     description?: string
   }
+  prometheus?: boolean
   logger?: Logger
-  pathways?: PathwaysBuilder
 }
 
-export class HonoApi {
+export class HonoApi<P extends boolean = false> {
   public readonly app: OpenAPIHono
+  public readonly prometheusRegistry!: P extends true ? Registry : undefined
+  public readonly metricsApp!: P extends true ? OpenAPIHono : undefined
 
   private logger: Logger = console
 
@@ -50,7 +54,7 @@ export class HonoApi {
     description: "Hono API",
   }
 
-  constructor(options: HonoApiOptions) {
+  constructor(options: HonoApiOptions & { prometheus?: P }) {
     if (options.logger) {
       this.logger = options.logger
     }
@@ -78,6 +82,21 @@ export class HonoApi {
         }
       },
     })
+
+    if (options.prometheus === true) {
+      this.prometheusRegistry = new Registry() as any
+      const { printMetrics, registerMetrics } = prometheus({
+        collectDefaultMetrics: true,
+        registry: this.prometheusRegistry,
+      })
+
+      this.app.use("*", registerMetrics)
+
+      this.metricsApp = new OpenAPIHono() as any
+      ;(this.metricsApp as any).get("/metrics", printMetrics)
+      ;(this.metricsApp as any).get("/health", (c: any) => c.json({ status: "ok" }))
+    }
+
     this.app.notFound(this.notFoundHandler.bind(this))
     this.app.onError(this.errorHandler.bind(this))
 
