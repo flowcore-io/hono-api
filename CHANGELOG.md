@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/flowcore-io/hono-api/compare/v0.1.4...v0.1.5) (2025-06-16)
+
+
+### Bug Fixes
+
+* export otel ([35ee621](https://github.com/flowcore-io/hono-api/commit/35ee621e20c859639d31db35bd50629faa7b5c68))
+
 ## [0.1.4](https://github.com/flowcore-io/hono-api/compare/v0.1.3...v0.1.4) (2025-06-16)
 
 
