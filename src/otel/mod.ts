@@ -20,6 +20,8 @@ export default function init({
     otelEndpoint,
     runtime,
   })
+
+  otelNodeSdk.start()
 }
 
 export function getOtelNodeSdk(): NodeSDK | undefined {
