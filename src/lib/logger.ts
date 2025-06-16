@@ -72,7 +72,9 @@ const customPrettyPrint = format.printf((log) => {
  * @param {LogLevel} logLevel - The minimum log level to output.
  * @returns An object with a method to create a logger instance.
  */
-export function loggerFactory(prettyPrintLogs: boolean, logLevel: LogLevel) {
+export function loggerFactory(prettyPrintLogs: boolean, logLevel: LogLevel): {
+  createLogger: (label?: string) => Logger
+} {
   return {
     /**
      * Creates a logger instance with the specified label.
