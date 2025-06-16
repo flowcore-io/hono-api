@@ -38,6 +38,16 @@ await build({
       "zod": "^3.25.63",
       "@flowcore/pathways": "^0.16.2",
     },
+    exports: {
+      ".": {
+        "import": "./esm/mod.js",
+        "require": "./script/mod.js",
+      },
+      "./otel": {
+        "import": "./esm/otel/mod.js",
+        "require": "./script/otel/mod.js",
+      },
+    },
   },
   compilerOptions: {
     lib: ["ES2023", "DOM"],
