@@ -11,7 +11,7 @@ export default function init({
   otelServiceName?: string
   otelEndpoint?: string
   runtime?: "node" | "bun" | "deno"
-}) {
+}): void {
   if (otelNodeSdk) {
     throw new Error("Otel already initialized")
   }
@@ -22,7 +22,7 @@ export default function init({
   })
 }
 
-export function getOtelNodeSdk() {
+export function getOtelNodeSdk(): NodeSDK {
   if (!otelNodeSdk) {
     throw new Error("Otel not initialized")
   }
