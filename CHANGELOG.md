@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0](https://github.com/flowcore-io/hono-api/compare/v0.0.24...v0.1.0) (2025-06-16)
+
+
+### Features
+
+* add otel ([9828ce0](https://github.com/flowcore-io/hono-api/commit/9828ce0586f854301dbf1742bd7edcd3d1b3f6be))
+
+
+### Bug Fixes
+
+* add try catch ([24c1993](https://github.com/flowcore-io/hono-api/commit/24c19935ef89d82a20f9e824c747f7306f6bf541))
+
 ## [0.0.24](https://github.com/flowcore-io/hono-api/compare/v0.0.23...v0.0.24) (2025-06-13)
 
 
