@@ -118,7 +118,8 @@ export class HonoApi {
 
       this.app.use("*", registerMetrics)
       this.app.get(options.prometheus.path ?? "/metrics", (c, next) => {
-        if (options.prometheus?.secret && c.req.header("X-Secret") !== options.prometheus.secret) {
+        const secret = c.req.query("secret") || c.req.header("x-secret")
+        if (options.prometheus?.secret && secret !== options.prometheus.secret) {
           throw new AppExceptionUnauthorized()
         }
         return next()
