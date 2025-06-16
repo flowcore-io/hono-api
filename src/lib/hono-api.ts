@@ -32,8 +32,8 @@ export interface HonoApiOptions {
     description?: string
   }
   prometheus?: {
-    secret: string
     path: string
+    secret?: string
   }
   otel?: {
     sdk: NodeSDK
@@ -44,9 +44,6 @@ export interface HonoApiOptions {
 export class HonoApi {
   public readonly app: OpenAPIHono
   public readonly prometheusRegistry?: Registry
-  private readonly otelServiceName?: string
-  private readonly otelEndpoint?: string
-  private readonly otelNodeSdk?: NodeSDK
 
   private logger: Logger = console
 

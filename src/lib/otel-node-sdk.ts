@@ -6,11 +6,20 @@ import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston"
 
 export function getOtelNodeSdk(
   { otelServiceName, otelEndpoint, runtime }: {
-    otelServiceName: string
-    otelEndpoint: string
-    runtime: "node" | "bun" | "deno"
+    otelServiceName?: string
+    otelEndpoint?: string
+    runtime?: "node" | "bun" | "deno"
   },
-) {
+): NodeSDK {
+  if (!otelServiceName) {
+    throw new Error("otelServiceName is required")
+  }
+  if (!otelEndpoint) {
+    throw new Error("otelEndpoint is required")
+  }
+  if (!runtime) {
+    throw new Error("runtime is required")
+  }
   const sdk = new NodeSDK({
     serviceName: otelServiceName,
     traceExporter: new OTLPTraceExporter({
