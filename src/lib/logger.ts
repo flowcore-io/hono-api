@@ -72,7 +72,10 @@ const customPrettyPrint = format.printf((log) => {
  * @param {LogLevel} logLevel - The minimum log level to output.
  * @returns An object with a method to create a logger instance.
  */
-export function loggerFactory(prettyPrintLogs: boolean, logLevel: LogLevel): {
+export function loggerFactory(options: {
+  prettyPrintLogs: boolean
+  logLevel: LogLevel
+}): {
   createLogger: (label?: string) => Logger
 } {
   return {
@@ -83,7 +86,7 @@ export function loggerFactory(prettyPrintLogs: boolean, logLevel: LogLevel): {
      * @returns A logger instance.
      */
     createLogger: (label?: string): Logger => {
-      const winstonFormat = prettyPrintLogs
+      const winstonFormat = options.prettyPrintLogs
         ? format.combine(
           otelInjector(),
           format.errors({ stack: true }),
@@ -100,7 +103,7 @@ export function loggerFactory(prettyPrintLogs: boolean, logLevel: LogLevel): {
         )
 
       return winstonCreateLogger({
-        level: logLevel,
+        level: options.logLevel,
         format: winstonFormat,
         defaultMeta: { label },
         transports: [new transports.Console()],
