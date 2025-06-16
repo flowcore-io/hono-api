@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.7](https://github.com/flowcore-io/hono-api/compare/v0.1.6...v0.1.7) (2025-06-16)
+
+
+### Bug Fixes
+
+* start otel sdk ([f50a658](https://github.com/flowcore-io/hono-api/commit/f50a658dae7e41036b3c0340aa454321d705c00f))
+
 ## [0.1.6](https://github.com/flowcore-io/hono-api/compare/v0.1.5...v0.1.6) (2025-06-16)
 
 
