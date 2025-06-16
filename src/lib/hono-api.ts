@@ -36,7 +36,7 @@ export interface HonoApiOptions {
     secret?: string
   }
   otel?: {
-    sdk: NodeSDK
+    sdk?: NodeSDK
   }
   logger?: Logger
 }
@@ -90,7 +90,7 @@ export class HonoApi {
       },
     })
 
-    if (options.otel) {
+    if (options.otel?.sdk) {
       this.app.use(otel())
     }
 

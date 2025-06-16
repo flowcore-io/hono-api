@@ -22,9 +22,6 @@ export default function init({
   })
 }
 
-export function getOtelNodeSdk(): NodeSDK {
-  if (!otelNodeSdk) {
-    throw new Error("Otel not initialized")
-  }
+export function getOtelNodeSdk(): NodeSDK | undefined {
   return otelNodeSdk
 }
