@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/flowcore-io/hono-api/compare/v0.1.5...v0.1.6) (2025-06-16)
+
+
+### Bug Fixes
+
+* fix otel ([fb7257b](https://github.com/flowcore-io/hono-api/commit/fb7257bec6ce2cea753260ed3512f00ee9f3844b))
+
 ## [0.1.5](https://github.com/flowcore-io/hono-api/compare/v0.1.4...v0.1.5) (2025-06-16)
 
 
