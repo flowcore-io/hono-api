@@ -36,11 +36,12 @@ export interface HonoApiOptions {
     description?: string
   }
   prometheus?: {
-    enabled?: boolean
+    enabled: boolean
     secret?: string
+    path?: string
   }
   otel?: {
-    enabled?: boolean
+    enabled: boolean
     runtime: "node" | "bun" | "deno"
     serviceName: string
     endpoint: string
@@ -50,7 +51,6 @@ export interface HonoApiOptions {
 
 export class HonoApi {
   public readonly app: OpenAPIHono
-  private readonly prometheusSecret?: string
   public readonly prometheusRegistry?: Registry
   private readonly otelServiceName?: string
   private readonly otelEndpoint?: string
@@ -110,7 +110,6 @@ export class HonoApi {
     }
 
     if (options.prometheus?.enabled) {
-      this.prometheusSecret = options.prometheus.secret
       this.prometheusRegistry = new Registry() as any
       const { printMetrics, registerMetrics } = prometheus({
         collectDefaultMetrics: true,
@@ -118,11 +117,11 @@ export class HonoApi {
       })
 
       this.app.use("*", registerMetrics)
-      this.app.get("/metrics", (c, next) => {
-        if (c.req.header("X-Secret") === this.prometheusSecret) {
-          return next()
+      this.app.get(options.prometheus.path ?? "/metrics", (c, next) => {
+        if (options.prometheus?.secret && c.req.header("X-Secret") !== options.prometheus.secret) {
+          throw new AppExceptionUnauthorized()
         }
-        throw new AppExceptionUnauthorized()
+        return next()
       }, printMetrics)
     }
 
