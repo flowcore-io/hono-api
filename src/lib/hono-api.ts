@@ -15,6 +15,12 @@ import type { Logger } from "../lib/logger.ts"
 import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
 import { prometheus } from "@hono/prometheus"
 import { Registry } from "prom-client"
+import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node"
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http"
+import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston"
+import { NodeSDK } from "@opentelemetry/sdk-node"
+import { otel } from "@hono/otel"
+import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch"
 
 export interface HonoApiOptions {
   auth?: {
@@ -29,14 +35,26 @@ export interface HonoApiOptions {
     name?: string
     description?: string
   }
-  prometheus?: boolean
+  prometheus?: {
+    enabled?: boolean
+    secret?: string
+  }
+  otel?: {
+    enabled?: boolean
+    runtime: "node" | "bun" | "deno"
+    serviceName: string
+    endpoint: string
+  }
   logger?: Logger
 }
 
-export class HonoApi<P extends boolean = false> {
+export class HonoApi {
   public readonly app: OpenAPIHono
-  public readonly prometheusRegistry!: P extends true ? Registry : undefined
-  public readonly metricsApp!: P extends true ? OpenAPIHono : undefined
+  private readonly prometheusSecret?: string
+  public readonly prometheusRegistry?: Registry
+  private readonly otelServiceName?: string
+  private readonly otelEndpoint?: string
+  private readonly otelNodeSdk?: NodeSDK
 
   private logger: Logger = console
 
@@ -54,7 +72,7 @@ export class HonoApi<P extends boolean = false> {
     description: "Hono API",
   }
 
-  constructor(options: HonoApiOptions & { prometheus?: P }) {
+  constructor(options: HonoApiOptions) {
     if (options.logger) {
       this.logger = options.logger
     }
@@ -83,7 +101,16 @@ export class HonoApi<P extends boolean = false> {
       },
     })
 
-    if (options.prometheus === true) {
+    if (options.otel?.enabled) {
+      this.otelServiceName = options.otel.serviceName
+      this.otelEndpoint = options.otel.endpoint
+      this.otelNodeSdk = this.getOtelNodeSdk()
+      this.otelNodeSdk.start()
+      this.app.use(otel())
+    }
+
+    if (options.prometheus?.enabled) {
+      this.prometheusSecret = options.prometheus.secret
       this.prometheusRegistry = new Registry() as any
       const { printMetrics, registerMetrics } = prometheus({
         collectDefaultMetrics: true,
@@ -91,10 +118,12 @@ export class HonoApi<P extends boolean = false> {
       })
 
       this.app.use("*", registerMetrics)
-
-      this.metricsApp = new OpenAPIHono() as any
-      ;(this.metricsApp as any).get("/metrics", printMetrics)
-      ;(this.metricsApp as any).get("/health", (c: any) => c.json({ status: "ok" }))
+      this.app.get("/metrics", (c, next) => {
+        if (c.req.header("X-Secret") === this.prometheusSecret) {
+          return next()
+        }
+        throw new AppExceptionUnauthorized()
+      }, printMetrics)
     }
 
     this.app.notFound(this.notFoundHandler.bind(this))
@@ -317,5 +346,34 @@ export class HonoApi<P extends boolean = false> {
         return c.json(response)
       },
     )
+  }
+
+  private getOtelNodeSdk() {
+    const sdk = new NodeSDK({
+      serviceName: this.otelServiceName,
+      traceExporter: new OTLPTraceExporter({
+        url: `${this.otelEndpoint}/v1/traces`,
+      }),
+      instrumentations: [
+        getNodeAutoInstrumentations({
+          "@opentelemetry/instrumentation-fs": { enabled: false },
+        }),
+        new FetchInstrumentation({
+          applyCustomAttributesOnSpan: (span: unknown) => {
+            if (span && typeof span === "object" && "setAttribute" in span) {
+              ;(span as { setAttribute: (key: string, value: string) => void }).setAttribute("runtime", "deno")
+            }
+          },
+        }),
+        new WinstonInstrumentation({
+          enabled: true,
+          logHook: (span, record) => {
+            record.trace_id = span.spanContext().traceId
+            record.span_id = span.spanContext().spanId
+          },
+        }),
+      ],
+    })
+    return sdk
   }
 }
