@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.2](https://github.com/flowcore-io/hono-api/compare/v0.1.1...v0.1.2) (2025-06-16)
+
+
+### Bug Fixes
+
+* allow prom secret to be passed from query ([46653ce](https://github.com/flowcore-io/hono-api/commit/46653ce23fba81d454c883cfcf6d5661fd8845f2))
+* changes to prom implementation ([d16cfe1](https://github.com/flowcore-io/hono-api/commit/d16cfe1999b6e53caf931a79d6307bef929e92f2))
+* export try catch ([ef47f03](https://github.com/flowcore-io/hono-api/commit/ef47f03cd7f19c2152fd22df106985c51552b537))
+
 ## [0.1.1](https://github.com/flowcore-io/hono-api/compare/v0.1.0...v0.1.1) (2025-06-16)
 
 
