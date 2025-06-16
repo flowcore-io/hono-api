@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/flowcore-io/hono-api/compare/v0.1.2...v0.1.3) (2025-06-16)
+
+
+### Bug Fixes
+
+* change logger options ([a19b9e9](https://github.com/flowcore-io/hono-api/commit/a19b9e982cee0534a73570c51800d2c21e598819))
+
 ## [0.1.2](https://github.com/flowcore-io/hono-api/compare/v0.1.1...v0.1.2) (2025-06-16)
 
 
