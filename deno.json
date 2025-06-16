@@ -20,6 +20,7 @@
     "@hono/prometheus": "npm:@hono/prometheus@^1.0.2",
     "@hono/zod-openapi": "npm:@hono/zod-openapi@^0.19.6",
     "@jabr/xxhash64": "jsr:@jabr/xxhash64@^2.0.0",
+    "@opentelemetry/api": "npm:@opentelemetry/api@^1.9.0",
     "@opentelemetry/auto-instrumentations-node": "npm:@opentelemetry/auto-instrumentations-node@^0.60.1",
     "@opentelemetry/exporter-trace-otlp-http": "npm:@opentelemetry/exporter-trace-otlp-http@^0.202.0",
     "@opentelemetry/instrumentation-fetch": "npm:@opentelemetry/instrumentation-fetch@^0.202.0",
