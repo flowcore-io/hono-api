@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.4](https://github.com/flowcore-io/hono-api/compare/v0.1.3...v0.1.4) (2025-06-16)
+
+
+### Bug Fixes
+
+* add return types ([19f7721](https://github.com/flowcore-io/hono-api/commit/19f7721380858cd63108e9f7c222db0d10a33e2a))
+* create otel sdk seperatly ([ccda925](https://github.com/flowcore-io/hono-api/commit/ccda9253c1f4cc0b113240b8608c30fe10ca3ea0))
+* export otel node sdk ([255aae4](https://github.com/flowcore-io/hono-api/commit/255aae416934466164df5cc2671f36bc31378bbe))
+* fix exports ([f401e1e](https://github.com/flowcore-io/hono-api/commit/f401e1e94febc2dd8646cc684bef23e92a777036))
+* minor changes ([84ec8ce](https://github.com/flowcore-io/hono-api/commit/84ec8ce6a99d9347b263c5c9ee4e56b4b4957304))
+* otel ([96df18f](https://github.com/flowcore-io/hono-api/commit/96df18fa26401b12a1d3ec254bef14178061d76f))
+
 ## [0.1.3](https://github.com/flowcore-io/hono-api/compare/v0.1.2...v0.1.3) (2025-06-16)
 
 
