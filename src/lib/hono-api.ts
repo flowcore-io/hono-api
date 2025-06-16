@@ -15,12 +15,8 @@ import type { Logger } from "../lib/logger.ts"
 import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
 import { prometheus } from "@hono/prometheus"
 import { Registry } from "prom-client"
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node"
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http"
-import { WinstonInstrumentation } from "@opentelemetry/instrumentation-winston"
-import { NodeSDK } from "@opentelemetry/sdk-node"
+import type { NodeSDK } from "@opentelemetry/sdk-node"
 import { otel } from "@hono/otel"
-import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch"
 
 export interface HonoApiOptions {
   auth?: {
@@ -36,15 +32,11 @@ export interface HonoApiOptions {
     description?: string
   }
   prometheus?: {
-    enabled: boolean
-    secret?: string
-    path?: string
+    secret: string
+    path: string
   }
   otel?: {
-    enabled: boolean
-    runtime: "node" | "bun" | "deno"
-    serviceName: string
-    endpoint: string
+    sdk: NodeSDK
   }
   logger?: Logger
 }
@@ -101,15 +93,11 @@ export class HonoApi {
       },
     })
 
-    if (options.otel?.enabled) {
-      this.otelServiceName = options.otel.serviceName
-      this.otelEndpoint = options.otel.endpoint
-      this.otelNodeSdk = this.getOtelNodeSdk()
-      this.otelNodeSdk.start()
+    if (options.otel) {
       this.app.use(otel())
     }
 
-    if (options.prometheus?.enabled) {
+    if (options.prometheus) {
       this.prometheusRegistry = new Registry() as any
       const { printMetrics, registerMetrics } = prometheus({
         collectDefaultMetrics: true,
@@ -117,7 +105,7 @@ export class HonoApi {
       })
 
       this.app.use("*", registerMetrics)
-      this.app.get(options.prometheus.path ?? "/metrics", (c, next) => {
+      this.app.get(options.prometheus.path, (c, next) => {
         const secret = c.req.query("secret") || c.req.header("x-secret")
         if (options.prometheus?.secret && secret !== options.prometheus.secret) {
           throw new AppExceptionUnauthorized()
@@ -346,34 +334,5 @@ export class HonoApi {
         return c.json(response)
       },
     )
-  }
-
-  private getOtelNodeSdk() {
-    const sdk = new NodeSDK({
-      serviceName: this.otelServiceName,
-      traceExporter: new OTLPTraceExporter({
-        url: `${this.otelEndpoint}/v1/traces`,
-      }),
-      instrumentations: [
-        getNodeAutoInstrumentations({
-          "@opentelemetry/instrumentation-fs": { enabled: false },
-        }),
-        new FetchInstrumentation({
-          applyCustomAttributesOnSpan: (span: unknown) => {
-            if (span && typeof span === "object" && "setAttribute" in span) {
-              ;(span as { setAttribute: (key: string, value: string) => void }).setAttribute("runtime", "deno")
-            }
-          },
-        }),
-        new WinstonInstrumentation({
-          enabled: true,
-          logHook: (span, record) => {
-            record.trace_id = span.spanContext().traceId
-            record.span_id = span.spanContext().spanId
-          },
-        }),
-      ],
-    })
-    return sdk
   }
 }
