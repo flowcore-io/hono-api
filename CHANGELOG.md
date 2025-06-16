@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1](https://github.com/flowcore-io/hono-api/compare/v0.1.0...v0.1.1) (2025-06-16)
+
+
+### Bug Fixes
+
+* add otel to logger ([0307b8f](https://github.com/flowcore-io/hono-api/commit/0307b8f527031da6d81c4b2a39af13fc77303d30))
+* add return type ([b58c258](https://github.com/flowcore-io/hono-api/commit/b58c258825caff9c13ef28b56a9327d829fed6e3))
+
 ## [0.1.0](https://github.com/flowcore-io/hono-api/compare/v0.0.24...v0.1.0) (2025-06-16)
 
 
