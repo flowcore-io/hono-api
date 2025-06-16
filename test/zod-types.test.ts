@@ -1,7 +1,6 @@
 import { expect } from "jsr:@std/expect"
 import { describe, it } from "jsr:@std/testing/bdd"
-import { zFlowcoreName } from "../src/lib/zod-types.ts"
-import { zBooleanString } from "@flowcore/hono-api"
+import { zBooleanString, zFlowcoreName } from "../src/lib/zod-types.ts"
 import { z } from "zod"
 
 describe("zod-types", () => {
