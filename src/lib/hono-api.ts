@@ -32,11 +32,12 @@ export interface HonoApiOptions {
     description?: string
   }
   prometheus?: {
-    path: string
+    enabled: boolean
+    path?: string
     secret?: string
   }
   otel?: {
-    sdk?: NodeSDK
+    enabled: boolean
   }
   logger?: Logger
 }
@@ -90,7 +91,7 @@ export class HonoApi {
       },
     })
 
-    if (options.otel?.sdk) {
+    if (options.otel?.enabled) {
       this.app.use(otel())
     }
 
@@ -102,7 +103,7 @@ export class HonoApi {
       })
 
       this.app.use("*", registerMetrics)
-      this.app.get(options.prometheus.path, (c, next) => {
+      this.app.get(options.prometheus.path ?? "/metrics", (c, next) => {
         const secret = c.req.query("secret") || c.req.header("x-secret")
         if (options.prometheus?.secret && secret !== options.prometheus.secret) {
           throw new AppExceptionUnauthorized()
