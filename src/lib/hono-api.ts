@@ -15,7 +15,6 @@ import type { Logger } from "../lib/logger.ts"
 import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
 import { prometheus } from "@hono/prometheus"
 import { Registry } from "prom-client"
-import type { NodeSDK } from "@opentelemetry/sdk-node"
 import { otel } from "@hono/otel"
 
 export interface HonoApiOptions {
@@ -92,7 +91,7 @@ export class HonoApi {
     })
 
     if (options.otel?.enabled) {
-      this.app.use(otel())
+      this.app.use("*", otel())
     }
 
     if (options.prometheus) {
