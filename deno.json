@@ -29,6 +29,7 @@
     "@opentelemetry/instrumentation-fetch": "npm:@opentelemetry/instrumentation-fetch@^0.202.0",
     "@opentelemetry/instrumentation-winston": "npm:@opentelemetry/instrumentation-winston@^0.47.0",
     "@opentelemetry/sdk-node": "npm:@opentelemetry/sdk-node@^0.202.0",
+    "@opentelemetry/sdk-trace-node": "npm:@opentelemetry/sdk-trace-node@^2.0.1",
     "@scalar/hono-api-reference": "npm:@scalar/hono-api-reference@^0.8.9",
     "@types/node": "npm:@types/node@^22.15.29",
     "bun-sqlite-key-value": "npm:bun-sqlite-key-value@^1.13.1",

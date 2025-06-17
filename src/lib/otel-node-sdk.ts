@@ -24,6 +24,7 @@ export function getOtelNodeSdk(
     serviceName: otelServiceName,
     traceExporter: new OTLPTraceExporter({
       url: `${otelEndpoint}/v1/traces`,
+      headers: { "Content-Type": "application/json" },
     }),
     instrumentations: [
       getNodeAutoInstrumentations({
