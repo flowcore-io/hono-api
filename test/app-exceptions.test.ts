@@ -1,20 +1,20 @@
 import { expect } from "jsr:@std/expect"
 import { describe, it } from "jsr:@std/testing/bdd"
-import { ZodError, ZodIssue } from "zod"
+import { ZodError, type ZodIssue } from "zod"
 import {
-    AppExceptionBadRequest,
-    AppExceptionConflict,
-    AppExceptionForbidden,
-    AppExceptionInternalServerError,
-    AppExceptionNotFound,
-    AppExceptionUnauthorized
+  AppExceptionBadRequest,
+  AppExceptionConflict,
+  AppExceptionForbidden,
+  AppExceptionInternalServerError,
+  AppExceptionNotFound,
+  AppExceptionUnauthorized,
 } from "../src/exceptions/app-exceptions.ts"
 
 describe("App Exceptions", () => {
   describe("AppExceptionInternalServerError", () => {
     it("should create exception with default message", () => {
       const exception = new AppExceptionInternalServerError()
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(500)
       expect(exception.code).toBe("INTERNAL_SERVER_ERROR")
@@ -25,7 +25,7 @@ describe("App Exceptions", () => {
     it("should create exception with original error", () => {
       const originalError = new Error("Database connection failed")
       const exception = new AppExceptionInternalServerError(originalError)
-      
+
       expect(exception.status).toBe(500)
       expect(exception.code).toBe("INTERNAL_SERVER_ERROR")
       expect(exception.message).toBe("Internal Server Error")
@@ -37,7 +37,7 @@ describe("App Exceptions", () => {
   describe("AppExceptionNotFound", () => {
     it("should create exception with resource details", () => {
       const exception = new AppExceptionNotFound("User", "id", "123")
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(404)
       expect(exception.code).toBe("NOT_FOUND")
@@ -47,7 +47,7 @@ describe("App Exceptions", () => {
     it("should handle different resource types", () => {
       const exception1 = new AppExceptionNotFound("DataCore", "name", "my-core")
       const exception2 = new AppExceptionNotFound("FlowType", "uuid", "abc-123")
-      
+
       expect(exception1.message).toBe("DataCore not found with name = my-core")
       expect(exception2.message).toBe("FlowType not found with uuid = abc-123")
     })
@@ -56,7 +56,7 @@ describe("App Exceptions", () => {
   describe("AppExceptionForbidden", () => {
     it("should create exception with default message", () => {
       const exception = new AppExceptionForbidden()
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(403)
       expect(exception.code).toBe("FORBIDDEN")
@@ -67,25 +67,25 @@ describe("App Exceptions", () => {
 
     it("should create exception with custom message", () => {
       const exception = new AppExceptionForbidden("Access denied to this resource")
-      
+
       expect(exception.message).toBe("Access denied to this resource")
     })
 
     it("should create exception with policy information", () => {
       const validPolicies = [
         { policyFrn: "frn::policy:read", statementId: "stmt-1" },
-        { policyFrn: "frn::policy:write", statementId: "stmt-2" }
+        { policyFrn: "frn::policy:write", statementId: "stmt-2" },
       ]
       const invalidRequest = [
-        { action: "delete", resource: ["frn::resource:123"] }
+        { action: "delete", resource: ["frn::resource:123"] },
       ] as any
 
       const exception = new AppExceptionForbidden(
         "Insufficient permissions",
         validPolicies,
-        invalidRequest
+        invalidRequest,
       )
-      
+
       expect(exception.message).toBe("Insufficient permissions")
       expect(exception.validPolicies).toEqual(validPolicies)
       expect(exception.invalidRequest).toEqual(invalidRequest)
@@ -95,7 +95,7 @@ describe("App Exceptions", () => {
   describe("AppExceptionUnauthorized", () => {
     it("should create exception with default message", () => {
       const exception = new AppExceptionUnauthorized()
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(401)
       expect(exception.code).toBe("UNAUTHORIZED")
@@ -104,7 +104,7 @@ describe("App Exceptions", () => {
 
     it("should create exception with custom message", () => {
       const exception = new AppExceptionUnauthorized("Invalid token")
-      
+
       expect(exception.message).toBe("Invalid token")
     })
 
@@ -112,9 +112,9 @@ describe("App Exceptions", () => {
       const exceptions = [
         new AppExceptionUnauthorized("JWT token expired"),
         new AppExceptionUnauthorized("Invalid API key"),
-        new AppExceptionUnauthorized("Missing authorization header")
+        new AppExceptionUnauthorized("Missing authorization header"),
       ]
-      
+
       expect(exceptions[0].message).toBe("JWT token expired")
       expect(exceptions[1].message).toBe("Invalid API key")
       expect(exceptions[2].message).toBe("Missing authorization header")
@@ -124,7 +124,7 @@ describe("App Exceptions", () => {
   describe("AppExceptionBadRequest", () => {
     it("should create exception with default message", () => {
       const exception = new AppExceptionBadRequest()
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(400)
       expect(exception.code).toBe("BAD_REQUEST")
@@ -135,7 +135,7 @@ describe("App Exceptions", () => {
 
     it("should create exception with custom message", () => {
       const exception = new AppExceptionBadRequest(undefined, undefined, "Invalid input data")
-      
+
       expect(exception.message).toBe("Invalid input data")
     })
 
@@ -147,7 +147,7 @@ describe("App Exceptions", () => {
           expected: "string",
           received: "number",
           path: ["name"],
-          message: "Expected string, received number"
+          message: "Expected string, received number",
         },
         {
           code: "too_small",
@@ -155,24 +155,24 @@ describe("App Exceptions", () => {
           type: "string",
           inclusive: true,
           path: ["email"],
-          message: "String must contain at least 1 character(s)"
+          message: "String must contain at least 1 character(s)",
         },
         {
           code: "invalid_string",
           validation: "email",
           path: ["email"],
-          message: "Invalid email"
-        }
+          message: "Invalid email",
+        },
       ]
 
       const zodError = new ZodError(zodIssues)
       const exception = new AppExceptionBadRequest(zodError, "body", "Validation failed")
-      
+
       expect(exception.message).toBe("Validation failed")
       expect(exception.in).toBe("body")
       expect(exception.errors).toEqual({
         "name": "Expected string, received number",
-        "email": "Invalid email" // Takes the last error for the same field
+        "email": "Invalid email", // Takes the last error for the same field
       })
     })
 
@@ -183,23 +183,23 @@ describe("App Exceptions", () => {
           expected: "string",
           received: "undefined",
           path: ["user", "profile", "name"],
-          message: "Required"
+          message: "Required",
         },
         {
           code: "invalid_type",
           expected: "number",
           received: "string",
           path: ["settings", "timeout"],
-          message: "Expected number, received string"
-        }
+          message: "Expected number, received string",
+        },
       ]
 
       const zodError = new ZodError(zodIssues)
       const exception = new AppExceptionBadRequest(zodError, "body")
-      
+
       expect(exception.errors).toEqual({
         "user.profile.name": "Required",
-        "settings.timeout": "Expected number, received string"
+        "settings.timeout": "Expected number, received string",
       })
     })
 
@@ -210,17 +210,17 @@ describe("App Exceptions", () => {
           expected: "string",
           received: "undefined",
           path: ["id"],
-          message: "Required"
-        }
+          message: "Required",
+        },
       ]
 
       const zodError = new ZodError(zodIssues)
-      
+
       const bodyException = new AppExceptionBadRequest(zodError, "body")
       const queryException = new AppExceptionBadRequest(zodError, "query")
       const paramsException = new AppExceptionBadRequest(zodError, "params")
       const headersException = new AppExceptionBadRequest(zodError, "headers")
-      
+
       expect(bodyException.in).toBe("body")
       expect(queryException.in).toBe("query")
       expect(paramsException.in).toBe("params")
@@ -231,7 +231,7 @@ describe("App Exceptions", () => {
   describe("AppExceptionConflict", () => {
     it("should create exception with default message", () => {
       const exception = new AppExceptionConflict()
-      
+
       expect(exception).toBeInstanceOf(Error)
       expect(exception.status).toBe(409)
       expect(exception.code).toBe("CONFLICT")
@@ -240,7 +240,7 @@ describe("App Exceptions", () => {
 
     it("should create exception with custom message", () => {
       const exception = new AppExceptionConflict("Resource already exists")
-      
+
       expect(exception.message).toBe("Resource already exists")
     })
 
@@ -248,9 +248,9 @@ describe("App Exceptions", () => {
       const exceptions = [
         new AppExceptionConflict("Email address already in use"),
         new AppExceptionConflict("Cannot delete resource with active dependencies"),
-        new AppExceptionConflict("Optimistic locking failure - resource was modified")
+        new AppExceptionConflict("Optimistic locking failure - resource was modified"),
       ]
-      
+
       expect(exceptions[0].message).toBe("Email address already in use")
       expect(exceptions[1].message).toBe("Cannot delete resource with active dependencies")
       expect(exceptions[2].message).toBe("Optimistic locking failure - resource was modified")
@@ -265,10 +265,10 @@ describe("App Exceptions", () => {
         new AppExceptionForbidden(),
         new AppExceptionUnauthorized(),
         new AppExceptionBadRequest(),
-        new AppExceptionConflict()
+        new AppExceptionConflict(),
       ]
 
-      exceptions.forEach(exception => {
+      exceptions.forEach((exception) => {
         expect(exception).toBeInstanceOf(Error)
         expect(typeof exception.status).toBe("number")
         expect(typeof exception.code).toBe("string")
@@ -283,7 +283,7 @@ describe("App Exceptions", () => {
         new AppExceptionForbidden().status,
         new AppExceptionUnauthorized().status,
         new AppExceptionBadRequest().status,
-        new AppExceptionConflict().status
+        new AppExceptionConflict().status,
       ]
 
       const uniqueStatusCodes = new Set(statusCodes)
@@ -297,7 +297,7 @@ describe("App Exceptions", () => {
         new AppExceptionForbidden().code,
         new AppExceptionUnauthorized().code,
         new AppExceptionBadRequest().code,
-        new AppExceptionConflict().code
+        new AppExceptionConflict().code,
       ]
 
       const uniqueErrorCodes = new Set(errorCodes)
@@ -308,17 +308,17 @@ describe("App Exceptions", () => {
   describe("Exception JSON Serialization", () => {
     it("should serialize basic exception properties", () => {
       const exception = new AppExceptionUnauthorized("Invalid credentials")
-      
+
       const serialized = {
         status: exception.status,
         code: exception.code,
-        message: exception.message
+        message: exception.message,
       }
-      
+
       expect(serialized).toEqual({
         status: 401,
         code: "UNAUTHORIZED",
-        message: "Invalid credentials"
+        message: "Invalid credentials",
       })
     })
 
@@ -329,53 +329,53 @@ describe("App Exceptions", () => {
           expected: "string",
           received: "number",
           path: ["name"],
-          message: "Expected string, received number"
-        }
+          message: "Expected string, received number",
+        },
       ]
 
       const zodError = new ZodError(zodIssues)
       const exception = new AppExceptionBadRequest(zodError, "body", "Validation failed")
-      
+
       const serialized = {
         status: exception.status,
         code: exception.code,
         message: exception.message,
         in: exception.in,
-        errors: exception.errors
+        errors: exception.errors,
       }
-      
+
       expect(serialized).toEqual({
         status: 400,
         code: "BAD_REQUEST",
         message: "Validation failed",
         in: "body",
         errors: {
-          "name": "Expected string, received number"
-        }
+          "name": "Expected string, received number",
+        },
       })
     })
 
     it("should serialize forbidden exception with policy details", () => {
       const validPolicies = [{ policyFrn: "frn::policy:read", statementId: "stmt-1" }]
       const invalidRequest = [{ action: "write", resource: ["frn::resource:123"] }] as any
-      
+
       const exception = new AppExceptionForbidden("Access denied", validPolicies, invalidRequest)
-      
+
       const serialized = {
         status: exception.status,
         code: exception.code,
         message: exception.message,
         validPolicies: exception.validPolicies,
-        invalidRequest: exception.invalidRequest
+        invalidRequest: exception.invalidRequest,
       }
-      
+
       expect(serialized).toEqual({
         status: 403,
         code: "FORBIDDEN",
         message: "Access denied",
         validPolicies: validPolicies,
-        invalidRequest: invalidRequest
+        invalidRequest: invalidRequest,
       })
     })
   })
-}) 
+})

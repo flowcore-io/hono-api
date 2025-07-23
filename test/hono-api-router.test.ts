@@ -34,7 +34,7 @@ describe("HonoApiRouter", () => {
       router.get("/test", {
         auth: { optional: true },
         output: z.object({ message: z.string() }),
-        handler: () => ({ message: "test" })
+        handler: () => ({ message: "test" }),
       })
 
       const routes = router.getRoutes()
@@ -47,10 +47,10 @@ describe("HonoApiRouter", () => {
       router.post("/create", {
         auth: { optional: true },
         input: {
-          body: z.object({ name: z.string() })
+          body: z.object({ name: z.string() }),
         },
         output: z.object({ id: z.string() }),
-        handler: ({ body }) => ({ id: crypto.randomUUID() })
+        handler: ({ body }) => ({ id: crypto.randomUUID() }),
       })
 
       const routes = router.getRoutes()
@@ -64,10 +64,10 @@ describe("HonoApiRouter", () => {
         auth: { optional: true },
         input: {
           params: z.object({ id: z.string() }),
-          body: z.object({ name: z.string() })
+          body: z.object({ name: z.string() }),
         },
         output: z.object({ success: z.boolean() }),
-        handler: () => ({ success: true })
+        handler: () => ({ success: true }),
       })
 
       const routes = router.getRoutes()
@@ -81,10 +81,10 @@ describe("HonoApiRouter", () => {
         auth: { optional: true },
         input: {
           params: z.object({ id: z.string() }),
-          body: z.object({ name: z.string().optional() })
+          body: z.object({ name: z.string().optional() }),
         },
         output: z.object({ updated: z.boolean() }),
-        handler: () => ({ updated: true })
+        handler: () => ({ updated: true }),
       })
 
       const routes = router.getRoutes()
@@ -97,9 +97,9 @@ describe("HonoApiRouter", () => {
       router.delete("/remove/:id", {
         auth: { optional: true },
         input: {
-          params: z.object({ id: z.string() })
+          params: z.object({ id: z.string() }),
         },
-        handler: () => null
+        handler: () => null,
       })
 
       const routes = router.getRoutes()
@@ -112,25 +112,25 @@ describe("HonoApiRouter", () => {
       router.get("/list", {
         auth: { optional: true },
         output: z.array(z.object({ id: z.string() })),
-        handler: () => []
+        handler: () => [],
       })
 
       router.post("/create", {
         auth: { optional: true },
         input: { body: z.object({ name: z.string() }) },
         output: z.object({ id: z.string() }),
-        handler: () => ({ id: "123" })
+        handler: () => ({ id: "123" }),
       })
 
       router.delete("/remove/:id", {
         auth: { optional: true },
         input: { params: z.object({ id: z.string() }) },
-        handler: () => null
+        handler: () => null,
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(3)
-      expect(routes.map(r => r.routeConfig.method)).toEqual(["get", "post", "delete"])
+      expect(routes.map((r) => r.routeConfig.method)).toEqual(["get", "post", "delete"])
     })
   })
 
@@ -138,7 +138,7 @@ describe("HonoApiRouter", () => {
     it("should handle routes with no input or output", () => {
       router.get("/simple", {
         auth: { optional: true },
-        handler: () => null
+        handler: () => null,
       })
 
       const routes = router.getRoutes()
@@ -155,23 +155,23 @@ describe("HonoApiRouter", () => {
         auth: { optional: true },
         input: {
           headers: z.object({
-            "x-api-key": z.string()
+            "x-api-key": z.string(),
           }),
           params: z.object({
-            id: z.string().uuid()
+            id: z.string().uuid(),
           }),
           query: z.object({
             include: z.string().optional(),
-            limit: z.number().default(10)
+            limit: z.number().default(10),
           }),
           body: z.object({
             name: z.string(),
-            metadata: z.record(z.any()).optional()
-          })
+            metadata: z.record(z.any()).optional(),
+          }),
         },
         output: z.object({
           success: z.boolean(),
-          data: z.any()
+          data: z.any(),
         }),
         handler: ({ headers, params, query, body }) => ({
           success: true,
@@ -180,14 +180,14 @@ describe("HonoApiRouter", () => {
             name: body.name,
             apiKey: headers["x-api-key"],
             query: query,
-            metadata: body.metadata
-          }
-        })
+            metadata: body.metadata,
+          },
+        }),
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(1)
-      
+
       const route = routes[0]
       expect(route.inOptions.summary).toBe("Complex endpoint")
       expect(route.inOptions.description).toBe("A complex endpoint with all input types")
@@ -205,19 +205,19 @@ describe("HonoApiRouter", () => {
           optional: false,
           permissions: (input) => [{
             action: "write",
-            resource: [`frn::tenant:resource:${input.params.id}`]
-          }]
+            resource: [`frn::tenant:resource:${input.params.id}`],
+          }],
         },
         input: {
-          params: z.object({ id: z.string() })
+          params: z.object({ id: z.string() }),
         },
         output: z.object({ authorized: z.boolean() }),
-        handler: () => ({ authorized: true })
+        handler: () => ({ authorized: true }),
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(1)
-      
+
       const route = routes[0]
       expect(route.inOptions.auth?.optional).toBe(false)
       expect(route.inOptions.auth?.permissions).toBeDefined()
@@ -232,15 +232,15 @@ describe("HonoApiRouter", () => {
         output: z.object({
           message: z.string().openapi({
             example: "Hello, world!",
-            description: "A greeting message"
-          })
+            description: "A greeting message",
+          }),
         }),
-        handler: () => ({ message: "Hello, world!" })
+        handler: () => ({ message: "Hello, world!" }),
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(1)
-      
+
       const route = routes[0]
       expect(route.inOptions.summary).toBe("Documented endpoint")
       expect(route.inOptions.description).toBe("This endpoint is well documented")
@@ -251,18 +251,18 @@ describe("HonoApiRouter", () => {
   describe("Path Handling", () => {
     it("should handle routes with base path", () => {
       const apiRouter = new HonoApiRouter("/api/v1")
-      
+
       apiRouter.get("/users", {
         auth: { optional: true },
         output: z.array(z.object({ id: z.string() })),
-        handler: () => []
+        handler: () => [],
       })
 
       apiRouter.get("/users/:id", {
         auth: { optional: true },
         input: { params: z.object({ id: z.string() }) },
         output: z.object({ id: z.string() }),
-        handler: ({ params }) => ({ id: params.id })
+        handler: ({ params }) => ({ id: params.id }),
       })
 
       const routes = apiRouter.getRoutes()
@@ -274,20 +274,20 @@ describe("HonoApiRouter", () => {
     it("should normalize paths correctly", () => {
       const router1 = new HonoApiRouter("/api/")
       const router2 = new HonoApiRouter("/api")
-      
+
       router1.get("/users/", {
         auth: { optional: true },
-        handler: () => null
+        handler: () => null,
       })
 
       router2.get("/users", {
         auth: { optional: true },
-        handler: () => null
+        handler: () => null,
       })
 
       const routes1 = router1.getRoutes()
       const routes2 = router2.getRoutes()
-      
+
       expect(routes1[0].routeConfig.path).toBe("/api/users/")
       expect(routes2[0].routeConfig.path).toBe("/api/users")
     })
@@ -298,17 +298,17 @@ describe("HonoApiRouter", () => {
         input: {
           params: z.object({
             userId: z.string(),
-            postId: z.string()
-          })
+            postId: z.string(),
+          }),
         },
         output: z.object({
           userId: z.string(),
-          postId: z.string()
+          postId: z.string(),
         }),
         handler: ({ params }) => ({
           userId: params.userId,
-          postId: params.postId
-        })
+          postId: params.postId,
+        }),
       })
 
       const routes = router.getRoutes()
@@ -320,7 +320,7 @@ describe("HonoApiRouter", () => {
       router.get("/", {
         auth: { optional: true },
         output: z.object({ message: z.string() }),
-        handler: () => ({ message: "root" })
+        handler: () => ({ message: "root" }),
       })
 
       const routes = router.getRoutes()
@@ -334,26 +334,26 @@ describe("HonoApiRouter", () => {
       // Mock pathways builder (since we're not testing auth, just the structure)
       const mockPathways = {
         // Minimal mock to test the withPathways method
-        withUserResolver: () => mockPathways
+        withUserResolver: () => mockPathways,
       } as any
 
       const routerWithPathways = router.withPathways(mockPathways)
-      
+
       expect(routerWithPathways.pathways).toBeDefined()
       expect(routerWithPathways).toBeInstanceOf(HonoApiRouter)
     })
 
     it("should maintain pathways in routes", () => {
       const mockPathways = {
-        withUserResolver: () => mockPathways
+        withUserResolver: () => mockPathways,
       } as any
 
       const routerWithPathways = router.withPathways(mockPathways)
-      
+
       routerWithPathways.get("/test", {
         auth: { optional: true },
         output: z.object({ message: z.string() }),
-        handler: () => ({ message: "test" })
+        handler: () => ({ message: "test" }),
       })
 
       const routes = routerWithPathways.getRoutes()
@@ -372,35 +372,35 @@ describe("HonoApiRouter", () => {
         input: {
           body: z.object({
             name: z.string().min(1),
-            type: z.enum(["public", "private"])
-          })
+            type: z.enum(["public", "private"]),
+          }),
         },
         output: z.object({
           id: z.string(),
           name: z.string(),
           type: z.string(),
-          createdAt: z.string()
+          createdAt: z.string(),
         }),
         handler: ({ body }) => ({
           id: crypto.randomUUID(),
           name: body.name,
           type: body.type,
-          createdAt: new Date().toISOString()
-        })
+          createdAt: new Date().toISOString(),
+        }),
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(1)
-      
+
       const route = routes[0]
       const config = route.routeConfig
-      
+
       expect(config.method).toBe("post")
       expect(config.path).toBe("/api/create")
       expect(config.summary).toBe("Create resource")
       expect(config.description).toBe("Creates a new resource")
       expect(config.tags).toEqual(["resources"])
-      
+
       // Check that request/response schemas are properly configured
       expect(config.request).toBeDefined()
       expect(config.responses).toBeDefined()
@@ -412,34 +412,34 @@ describe("HonoApiRouter", () => {
         tags: ["resources"],
         auth: { optional: true },
         input: {
-          params: z.object({ id: z.string().uuid() })
+          params: z.object({ id: z.string().uuid() }),
         },
         handler: ({ params }) => {
           console.log(`Removing resource ${params.id}`)
           return null
-        }
+        },
       })
 
       const routes = router.getRoutes()
       expect(routes).toHaveLength(1)
-      
+
       const route = routes[0]
       expect(route.inOptions.output).toBeUndefined()
       expect(route.inOptions.handler).toBeDefined()
     })
 
     it("should maintain handler references", () => {
-      const testHandler = ({ query }: any) => ({ 
-        result: `Query: ${query.search}` 
+      const testHandler = ({ query }: any) => ({
+        result: `Query: ${query.search}`,
       })
 
       router.get("/search", {
         auth: { optional: true },
         input: {
-          query: z.object({ search: z.string() })
+          query: z.object({ search: z.string() }),
         },
         output: z.object({ result: z.string() }),
-        handler: testHandler
+        handler: testHandler,
       })
 
       const routes = router.getRoutes()
@@ -454,51 +454,51 @@ describe("HonoApiRouter", () => {
         .get("/first", {
           auth: { optional: true },
           output: z.object({ order: z.number() }),
-          handler: () => ({ order: 1 })
+          handler: () => ({ order: 1 }),
         })
         .post("/second", {
           auth: { optional: true },
           input: { body: z.object({ data: z.string() }) },
           output: z.object({ order: z.number() }),
-          handler: () => ({ order: 2 })
+          handler: () => ({ order: 2 }),
         })
         .put("/third", {
           auth: { optional: true },
-          input: { 
+          input: {
             params: z.object({ id: z.string() }),
-            body: z.object({ data: z.string() })
+            body: z.object({ data: z.string() }),
           },
           output: z.object({ order: z.number() }),
-          handler: () => ({ order: 3 })
+          handler: () => ({ order: 3 }),
         })
 
       expect(chainedRouter).toBeInstanceOf(HonoApiRouter)
-      
+
       const routes = chainedRouter.getRoutes()
       expect(routes).toHaveLength(3)
-      expect(routes.map(r => r.routeConfig.method)).toEqual(["get", "post", "put"])
+      expect(routes.map((r) => r.routeConfig.method)).toEqual(["get", "post", "put"])
     })
 
     it("should maintain router instance through chaining", () => {
       const originalRouter = new HonoApiRouter("/api")
-      
+
       const chainedRouter = originalRouter
         .get("/test1", {
           auth: { optional: true },
-          handler: () => null
+          handler: () => null,
         })
         .get("/test2", {
           auth: { optional: true },
-          handler: () => null
+          handler: () => null,
         })
 
       expect(chainedRouter).toBe(originalRouter)
       expect(chainedRouter.basePath).toBe("/api")
-      
+
       const routes = chainedRouter.getRoutes()
       expect(routes).toHaveLength(2)
       expect(routes[0].routeConfig.path).toBe("/api/test1")
       expect(routes[1].routeConfig.path).toBe("/api/test2")
     })
   })
-}) 
+})

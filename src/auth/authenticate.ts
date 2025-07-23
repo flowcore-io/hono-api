@@ -89,7 +89,7 @@ export function createOIDCConfig(options: {
     emailClaim = "email",
     adminClaim,
     adminValue = true,
-    requiredClaims = []
+    requiredClaims = [],
   } = options
 
   return {
@@ -104,16 +104,20 @@ export function createOIDCConfig(options: {
       const email = payload[emailClaim]
       return typeof email === "string" ? email : undefined
     },
-    extractIsAdmin: adminClaim ? (payload) => {
-      return payload[adminClaim] === adminValue
-    } : () => false,
-    validatePayload: requiredClaims.length > 0 ? (payload) => {
-      for (const claim of requiredClaims) {
-        if (!(claim in payload)) {
-          throw new AppExceptionUnauthorized(`Missing required claim: ${claim}`)
+    extractIsAdmin: adminClaim
+      ? (payload) => {
+        return payload[adminClaim] === adminValue
+      }
+      : () => false,
+    validatePayload: requiredClaims.length > 0
+      ? (payload) => {
+        for (const claim of requiredClaims) {
+          if (!(claim in payload)) {
+            throw new AppExceptionUnauthorized(`Missing required claim: ${claim}`)
+          }
         }
       }
-    } : undefined,
+      : undefined,
   }
 }
 

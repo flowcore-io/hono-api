@@ -1,4 +1,4 @@
-import { format, transports, createLogger as winstonCreateLogger } from "winston"
+import { createLogger as winstonCreateLogger, format, transports } from "winston"
 import { colorize, Style } from "./colorize.ts"
 
 export enum LogLevel {
