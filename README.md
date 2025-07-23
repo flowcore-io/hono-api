@@ -95,3 +95,36 @@ Bun.serve({
   fetch: honoApi.app.fetch
 })
 ```
+
+## Testing
+
+The project includes comprehensive tests for the API functionality:
+
+```bash
+# Run all tests
+deno task test
+
+# Run tests in watch mode
+deno task test:watch
+
+# Run tests with coverage
+deno task test:coverage
+
+# Type check all files
+deno task typecheck
+```
+
+### Test Coverage
+
+The test suite covers:
+
+- **HonoApi Class**: Initialization, configuration, router mounting, request handling
+- **HonoApiRouter Class**: Route registration, path handling, HTTP methods, configuration
+- **Exception Classes**: All error types with proper status codes and serialization
+- **Request/Response Handling**: GET, POST, PUT, PATCH, DELETE methods
+- **Input Validation**: Headers, query parameters, path parameters, request bodies
+- **OpenAPI Documentation**: Spec generation and documentation serving
+- **Prometheus Metrics**: Metrics collection and endpoint protection
+- **Error Handling**: Internal server errors and custom exceptions
+
+Authentication tests are excluded as requested, but can be added separately if needed.

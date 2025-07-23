@@ -16,7 +16,11 @@
     ]
   },
   "tasks": {
-    "build:npm": "deno run -A bin/build-npm.ts"
+    "build:npm": "deno run -A bin/build-npm.ts",
+    "test": "deno test --allow-all test/",
+    "test:watch": "deno test --allow-all --watch test/",
+    "test:coverage": "deno test --allow-all --coverage=coverage test/",
+    "typecheck": "deno check src/**/*.ts test/**/*.ts"
   },
   "imports": {
     "@hono/otel": "npm:@hono/otel@^0.2.2",
