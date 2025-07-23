@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.0](https://github.com/flowcore-io/hono-api/compare/v0.1.9...v0.2.0) (2025-07-23)
+
+
+### Features
+
+* **cursor:** :sparkles: add bjarki persona rules file ([0631c7a](https://github.com/flowcore-io/hono-api/commit/0631c7acdf235c0766c1535bc0a6bba801e87aee))
+* **tests:** :sparkles: add comprehensive tests for HonoApi and HonoApiRouter ([fff03a9](https://github.com/flowcore-io/hono-api/commit/fff03a92b14ee53b8f8a947acc7aa0c109355a5d))
+
+
+### Bug Fixes
+
+* **readme:** :memo: add OpenTelemetry trace-log correlation setup instructions ([482365a](https://github.com/flowcore-io/hono-api/commit/482365a97625ebdaa457b8f3f65b5ab453ed875f))
+* **tests:** :art: improve type safety in app-exceptions and hono-api-router tests ([277186f](https://github.com/flowcore-io/hono-api/commit/277186f2efbe2e84c4ad96614a4559f53487c1ca))
+
 ## [0.1.9](https://github.com/flowcore-io/hono-api/compare/v0.1.8...v0.1.9) (2025-06-17)
 
 
