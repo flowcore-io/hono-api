@@ -1,16 +1,5 @@
-import { context, trace } from "@opentelemetry/api"
-import { createLogger as winstonCreateLogger, format, transports } from "winston"
+import { format, transports, createLogger as winstonCreateLogger } from "winston"
 import { colorize, Style } from "./colorize.ts"
-
-const otelInjector = format((info) => {
-  const span = trace.getSpan(context.active())
-  if (span) {
-    const { traceId, spanId } = span.spanContext()
-    info.trace_id = traceId
-    info.span_id = spanId
-  }
-  return info
-})
 
 export enum LogLevel {
   Debug = "debug",
@@ -88,14 +77,12 @@ export function loggerFactory(options: {
     createLogger: (label?: string): Logger => {
       const winstonFormat = options.prettyPrintLogs
         ? format.combine(
-          otelInjector(),
           format.errors({ stack: true }),
           format.label({ label }),
           format.timestamp(),
           customPrettyPrint,
         )
         : format.combine(
-          otelInjector(),
           format.errors({ stack: true }),
           format.label({ label }),
           format.timestamp(),

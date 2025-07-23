@@ -1,5 +1,56 @@
 # Flowcore Hono API Builder
 
+## OpenTelemetry Trace-Log Correlation
+
+For trace-log correlation to work properly, **initialization order is critical**:
+
+### ✅ Correct Setup
+
+```ts
+// main.ts - FIRST THING IN APPLICATION
+import init from "@flowcore/hono-api/otel"
+
+// Initialize OTEL before any other imports
+init({
+  otelServiceName: "my-api",
+  otelEndpoint: "http://localhost:4318", // OTLP HTTP endpoint
+  runtime: "bun" // or "node" | "deno"
+})
+
+// Now safe to import and use the library
+import { HonoApi, HonoApiRouter, loggerFactory } from "@flowcore/hono-api"
+import { z } from "@hono/zod-openapi"
+
+// Create logger with trace correlation
+const createLogger = loggerFactory({
+  prettyPrintLogs: true,
+  logLevel: "info"
+}).createLogger
+
+const logger = createLogger("main")
+
+// Your logs will now include trace_id and span_id automatically
+logger.info("Application starting", { port: 3000 })
+```
+
+### ❌ Common Mistakes
+
+```ts
+// WRONG: Creating logger before OTEL initialization
+import { loggerFactory } from "@flowcore/hono-api"
+const logger = loggerFactory(...).createLogger("main") // No trace correlation!
+
+import init from "@flowcore/hono-api/otel"
+init({ ... }) // Too late - logger already created
+```
+
+### Environment Variables
+
+| Variable | Type | Description | Default | Required |
+|----------|------|-------------|----------|----------|
+| OTEL_SERVICE_NAME | string | Service name for traces | - | ✓ |
+| OTEL_EXPORTER_OTLP_ENDPOINT | string | OTLP endpoint URL | - | ✓ |
+
 ## Usage
 
 ```ts
