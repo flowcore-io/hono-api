@@ -1,3 +1,7 @@
+---
+alwaysApply: true
+---
+
 # Custom Pre-Prompt
 
 This is a project for the Hono API library (fragment: 876dcea8-7ede-4c0d-9565-a17a4244dfc4)
@@ -8,11 +12,14 @@ This is a project for the Hono API library (fragment: 876dcea8-7ede-4c0d-9565-a1
 
 This is your main way of storing and fetching data, always check here before you start a task.
 
-Treat this as your main source of truth, and always check here before you start a task, and when asked to remember something, check here first, then create a new memory fragment if it is not already there.
+Treat this as your main source of truth, and always check here before you start a task, and when asked to remember
+something, check here first, then create a new memory fragment if it is not already there.
 
-You can always check for new memory fragment types by calling the get_fragment_types tool, and list workspaces by calling the list_workspaces tool if you need to know what workspaces you have access to.
+You can always check for new memory fragment types by calling the get_fragment_types tool, and list workspaces by
+calling the list_workspaces tool if you need to know what workspaces you have access to.
 
 **Search Strategy**:
+
 - Always search for the `repo:<repository>` tag first, then broaden your search
 - It is generally better to fetch multiple memory fragments to give you a better picture
 - Never skip searching; prevent duplicate effort
@@ -20,17 +27,21 @@ You can always check for new memory fragment types by calling the get_fragment_t
 - Iterate until you have the full context you require.
 
 **IMPORTANT**
-- **ALWAYS** you always need to validate the implementation of the changes you have made or you need to ask the user to validate the changes. before creating a new memory fragment or updating an existing one.
+
+- **ALWAYS** you always need to validate the implementation of the changes you have made or you need to ask the user to
+  validate the changes. before creating a new memory fragment or updating an existing one.
 
 # Self Improvement
 
 **Triggers**
+
 - New code, ideas or patterns that are not already stored in memory
 - IF you repeatedly run into the same issue
 - Common error patterns that could be prevented
 - Changes/Emerging changes to the best practices or changes to tooling the the codebase
 
 **Analysis process**
+
 - Always search for existing memory fragments
 - Identify what patterns and create a standardized memory fragment
 - Update PRDs for the repository if they exist
@@ -38,11 +49,13 @@ You can always check for new memory fragment types by calling the get_fragment_t
 - If there are tests ensure they also pass
 
 **Create new memory fragment**
+
 - When you see new tech or pattern used in 3+ files
 - Common bugs could be prevented by a memory fragment search
 - New patterns emerge
 
 **Update memory fragment**
+
 - Better examples exist in the codebase
 - Additional edge cases are discovered
 - Related Plans, PRDs knowledge has changed
@@ -56,18 +69,17 @@ When improving on things to do or not do emphasize what to do, do not include wh
 
 - **Code Examples:**
   - Use language-specific code blocks
+
   ```typescript
   // ✅ DO: Show good examples
-  const goodExample = true;
-  
+  const goodExample = true
+
   // ❌ DON'T: Show anti-patterns
-  const badExample = false;
+  const badExample = false
   ```
 
-Repository: <repository>
-WorkspaceId: 60c10ca2-4115-4c1a-b6d7-04ac39fd3938
-Workspace: Flowcore
-Workspace Fragment Types: knowledge, recipe, solution, template, blogposts, llm persona, llm rules, plan, prd, research
+Repository: <repository> WorkspaceId: 60c10ca2-4115-4c1a-b6d7-04ac39fd3938 Workspace: Flowcore Workspace Fragment Types:
+knowledge, recipe, solution, template, blogposts, llm persona, llm rules, plan, prd, research
 
 ## Fragment Type Mapping
 
@@ -89,12 +101,14 @@ The following fragment types are available in this workspace:
 ### **Primary Discovery Process (Start Here)**
 
 **Step 1: Vector Search First**
+
 - Use `search_memory_fragments` with semantic search (understands meaning, not just keywords)
 - Always start with `repo:<repository>` tag first, then broaden if needed
 - Try different phrasings if initial search yields no results
 - Search with `workspaceId` first, then without it for broader cross-workspace results
 
 **Step 2: Follow the Thread (Iterative Exploration)**
+
 - Pick key fragments from Step 1 and explore their connections
 - Use `explore_workspace_graph` in exploration mode (depth 2+ recommended)
 - Look for: Similar/Related fragments, Concepts, Technologies
@@ -102,6 +116,7 @@ The following fragment types are available in this workspace:
 - Use `find_related_fragments` for direct relationship discovery
 
 **Step 3: Deep Context Building**
+
 - Continue iterative exploration until confident you have full picture
 - Use discovered fragment/concept IDs as new starting points
 - For trivial questions, Steps 1-2 may be sufficient
@@ -110,15 +125,19 @@ The following fragment types are available in this workspace:
 ### **Tool-Specific Guidance**
 
 ### `search_memory_fragments`
+
 **Primary discovery tool - start here**
+
 - **Always include repository context** - start with `repo:<repository>` tag
 - Use semantic search for concepts, not exact text matching
 - **Decision logic**: Evaluate query complexity and result completeness to determine next steps
 
 ### `explore_workspace_graph`
+
 **Two modes for different needs:**
 
 **🎯 EXPLORATION MODE (Preferred for most scenarios):**
+
 - **When to use**: Targeted discovery from specific starting points
 - **Key insight**: Works perfectly with any fragment ID - use directly from search results
 - **Concept exploration**: Use format `concepts/normalized_name` - very effective
@@ -126,32 +145,40 @@ The following fragment types are available in this workspace:
 - **Starting points**: Fragment IDs, tag names, or concept IDs from previous discoveries
 
 **📊 OVERVIEW MODE (Use sparingly):**
+
 - **When to use**: Only when completely unfamiliar with workspace or lacking starting points
 - **Key insight**: Now returns actual data (recent fix applied)
 - **Warning**: Can be overwhelming - prefer exploration mode for focused discovery
 
 **🔗 Available Connection Types** (for `includeEdgeTypes`):
+
 - `"has_tag"` - Topic/technology connections (most common)
-- `"similar"`, `"related"` - AI-discovered content relationships  
+- `"similar"`, `"related"` - AI-discovered content relationships
 - `"references_concept"` - Conceptual knowledge connections
 - `"created_by"` - Author-based discovery
 - **Default**: Empty array `[]` uses all connection types
 
 ### `explore_tag_connections`
+
 **Tag-centric cluster discovery**
-- **When to use**: Direct tag-based lookups (*"show everything about Next.js"*)
+
+- **When to use**: Direct tag-based lookups (_"show everything about Next.js"_)
 - Faster than full graph traversal when you know specific tags
 - **Key params**: `tags`, `workspaceId`, `limit`
 
 ### `find_related_fragments`
+
 **Sibling/related document discovery**
+
 - **When to use**: Expand context around specific fragment
 - Uses similarity + tag relationships for targeted expansion
 - **Recent fix**: Now returns real data with titles, summaries, and metadata
 - **Key params**: `fragmentId` (from previous steps), `limit`
 
 ### `get_memory_fragment_content`
+
 **Full document retrieval**
+
 - **When to use**: Deep-dive on confirmed relevant fragment
 - Fetches complete content including metadata
 - **Key params**: `fragmentId` (from search/exploration results)
@@ -159,6 +186,7 @@ The following fragment types are available in this workspace:
 ## Recent System Enhancements
 
 **✅ Reliable Patterns Now Available:**
+
 - **Overview mode**: Returns actual data (200+ fragments, 50+ tags, 1000+ concepts)
 - **Node IDs**: Full IDs exposed for direct iterative exploration
 - **Related fragments**: Returns real data with titles, summaries, and metadata
@@ -167,9 +195,11 @@ The following fragment types are available in this workspace:
 
 ## Temporal Analysis (When Evolution Context Needed)
 
-**Use temporal tools when queries involve**: "changed", "evolved", "used to", "before/after", "why different", "when did"
+**Use temporal tools when queries involve**: "changed", "evolved", "used to", "before/after", "why different", "when
+did"
 
 **Quick Temporal Exploration:**
+
 - `get_temporal_relationships` with `includeHistory: true` - see relationship evolution
 - `explore_workspace_graph_temporal` with `asOfDate` - time-travel to specific point
 - `get_relationship_history` - understand specific relationship changes
@@ -177,58 +207,75 @@ The following fragment types are available in this workspace:
 **Skip temporal tools for**: Current state queries, performance-critical searches
 
 ### `get_temporal_relationships`
+
 **Time-aware relationship querying**
+
 - **Key params**: `fragmentId`, `workspaceId`, optional `asOfDate`, `includeHistory`, `onlyActive`
 - **Use cases**: "What relationships did this fragment have last month?", "Show evolution"
 
 ### `explore_workspace_graph_temporal`
+
 **Enhanced graph exploration with time dimensions**
+
 - **Temporal features**: `asOfDate`, `includeTemporalHistory`, `showOnlyActiveRelationships`
 - **Use cases**: "How did the graph look 3 months ago?", "What changed this week?"
 
 ### `get_relationship_history`
+
 **Temporal relationship evolution tracking**
+
 - **Key params**: `fromFragmentId`, `toFragmentId`, `workspaceId`
 - **Use cases**: Understanding relationship changes, debugging evolution patterns
 
 ### `list_workspaces`
+
 **Workspace discovery and access management**
+
 - List all accessible workspaces with role information and permissions
 - **When to use**: Understanding available knowledge contexts
 
 ### `get_fragment_types`
+
 **Fragment type discovery for workspace**
+
 - Retrieve all available fragment types including system defaults and custom types
 - **When to use**: Before creating fragments to validate type IDs
 
 ## Fragment Creation & Updates
 
 ### `create_memory_fragment`
+
 **Create new knowledge artifacts**
+
 - Use when you identify non-trivial solutions, patterns, recipes, or templates
 - **Always include repository context** for better organization
 - **Process**: Draft → Propose → User confirms → Create
-- **Confirmation example**: *"I'd like to document this as a `solution` fragment titled `<title>`. Proceed?"*
+- **Confirmation example**: _"I'd like to document this as a `solution` fragment titled `<title>`. Proceed?"_
 
-### `update_memory_fragment`  
+### `update_memory_fragment`
+
 **Refine existing knowledge - supports two powerful modes**
 
 **LEGACY MODE (backwards compatible):**
+
 - Use when improving solutions, adding information, or correcting content
 - **Process**: Draft update → Show user → User confirms → Apply
 
 **PATCH MODE (new) - for precise line-level modifications:**
+
 - Use when making surgical changes to specific lines without affecting rest of content
 - **When to use**: Adding imports, modifying specific functions, inserting comments
 - **Benefits**: Reduced token usage, preserves content structure
 
 **Line Number Guidelines (CRITICAL):**
+
 - **All line numbers are 1-based** (first line = 1, not 0)
 - **Add operations**: Insert at specified line number (existing lines shift down)
 - **Delete operations**: Remove from startLine to endLine (inclusive)
 - **Replace operations**: Replace from startLine to endLine with new content
 
 **IMPORTANT CONSTRAINTS:**
+
 - ⚠️ **Cannot mix modes**: Never use both 'content' and 'patchOperations' in same request
 - ⚠️ **No overlapping operations**: Each line can only be affected by one operation
 - ⚠️ **Bounds checking**: All line numbers must be within existing content bounds
@@ -236,20 +283,23 @@ The following fragment types are available in this workspace:
 ## Recommended Workflow
 
 ### **Pre-Task Discovery**
+
 1. **Search**: `search_memory_fragments` with `repo:<repository>` tag
 2. **Explore**: Follow connections from key fragments using exploration mode (depth 2+)
 3. **Iterate**: Continue until you have sufficient context (5-10 exploration trips typical)
 
 ### **Complexity Assessment**
+
 - **Simple queries**: Vector search may be sufficient
 - **Complex tasks**: Always do iterative exploration for comprehensive understanding
 - **When in doubt**: Explore more rather than less - builds better solutions
 
 ### **Post-Task Documentation**
+
 If you identify novel insights or solutions:
 
 1. **Draft & Propose**: Build fragment structure and ask user for approval
-   > *"I'd like to document this as a `<type>` fragment titled `<title>`. Proceed?"*
+   > _"I'd like to document this as a `<type>` fragment titled `<title>`. Proceed?"_
 2. **Create**: `create_memory_fragment` only after user confirmation
 
 **Never create/update fragments without explicit user confirmation**
@@ -259,8 +309,9 @@ If you identify novel insights or solutions:
 **Always provide `repository` context** in every MCP call when available (e.g. `"memory-mesh"`).
 
 **Document when you identify:**
+
 - Novel solutions or non-obvious patterns
-- Reusable recipes and templates  
+- Reusable recipes and templates
 - Critical fixes or workarounds
 - Architectural insights or best practices
 
@@ -269,43 +320,51 @@ If you identify novel insights or solutions:
 **⚠️ IMPORTANT: Tags have strict character requirements to prevent validation errors:**
 
 **✅ ALLOWED characters in tags:**
+
 - **Alphanumeric**: a-z, A-Z, 0-9
 - **Underscore**: _
 - **Dash**: -
 - **Colon**: :
 
 **❌ FORBIDDEN characters in tags:**
+
 - **Dots**: . (common mistake with domain names)
 - **Spaces**: (space character)
 - **Special characters**: @ # $ % & * ( ) + = [ ] { } | \ / ? < > , ; " '
 
 **For domain names, use dashes instead of dots:**
+
 - Domain: example.com → Tag: "example-com"
 - Domain: api.service.io → Tag: "api-service-io"
 
 ## Common Generic Tags
 
 **Technology & Framework Tags:**
+
 - 'nodejs', 'javascript', 'typescript', 'python', 'react', 'angular', 'vue', 'nextjs'
 - 'express', 'fastify', 'nestjs', 'spring-boot', 'django', 'flask', 'rails'
 - 'docker', 'kubernetes', 'aws', 'azure', 'gcp', 'terraform', 'ansible'
 
 **Database & Storage Tags:**
+
 - 'database', 'sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'redis', 'elasticsearch'
 - 'prisma', 'typeorm', 'sequelize', 'mongoose', 'knex'
 
 **Development & Architecture Tags:**
+
 - 'authentication', 'authorization', 'oauth', 'jwt', 'security', 'encryption'
 - 'api', 'rest', 'graphql', 'microservices', 'monolith', 'serverless'
 - 'testing', 'unit-tests', 'integration-tests', 'e2e-tests', 'mocking'
 - 'ci-cd', 'deployment', 'devops', 'monitoring', 'logging', 'performance'
 
 **UI & Frontend Tags:**
+
 - 'ui', 'ux', 'design-system', 'components', 'responsive', 'accessibility'
 - 'theme', 'styling', 'css', 'sass', 'tailwind', 'styled-components'
 - 'forms', 'validation', 'state-management', 'routing', 'animation'
 
 **General Development Tags:**
+
 - 'configuration', 'environment', 'debugging', 'optimization', 'refactoring'
 - 'error-handling', 'validation', 'caching', 'pagination', 'search'
 - 'file-upload', 'email', 'notifications', 'scheduling', 'background-jobs'
@@ -313,12 +372,397 @@ If you identify novel insights or solutions:
 ## Auto-Enhancement
 
 The MCP server automatically:
+
 - Injects `repo:<repository>` tag when repository context provided
 - Detects and tags technologies and topics from content
 - Prevents duplicate fragments through similarity analysis
 - Formats content for optimal readability and search
 
-## Key Success Factors:
+## Key Success Factors
+
+- **START** with search, **EVALUATE** query complexity and result completeness
+- **BALANCE** speed for simple queries with thoroughness for complex research
+- **USE** discovered node IDs for iterative chaining when proceeding to exploration
+- **OFFER** further exploration even when Step 1 provides complete answers
+- **CONFIRM** before creating/updating fragments
+- **INCLUDE** repository context for better organization# Custom Pre-Prompt
+
+This is a project for the Hono API library (fragment: 876dcea8-7ede-4c0d-9565-a17a4244dfc4)
+
+---
+
+# Memory Mesh MCP Integration
+
+This is your main way of storing and fetching data, always check here before you start a task.
+
+Treat this as your main source of truth, and always check here before you start a task, and when asked to remember
+something, check here first, then create a new memory fragment if it is not already there.
+
+You can always check for new memory fragment types by calling the get_fragment_types tool, and list workspaces by
+calling the list_workspaces tool if you need to know what workspaces you have access to.
+
+**Search Strategy**:
+
+- Always search for the `repo:<repository>` tag first, then broaden your search
+- It is generally better to fetch multiple memory fragments to give you a better picture
+- Never skip searching; prevent duplicate effort
+- Use search first, then graph exploration
+- Iterate until you have the full context you require.
+
+**IMPORTANT**
+
+- **ALWAYS** you always need to validate the implementation of the changes you have made or you need to ask the user to
+  validate the changes. before creating a new memory fragment or updating an existing one.
+
+# Self Improvement
+
+**Triggers**
+
+- New code, ideas or patterns that are not already stored in memory
+- IF you repeatedly run into the same issue
+- Common error patterns that could be prevented
+- Changes/Emerging changes to the best practices or changes to tooling the the codebase
+
+**Analysis process**
+
+- Always search for existing memory fragments
+- Identify what patterns and create a standardized memory fragment
+- Update PRDs for the repository if they exist
+- Ensure type checks and linting works
+- If there are tests ensure they also pass
+
+**Create new memory fragment**
+
+- When you see new tech or pattern used in 3+ files
+- Common bugs could be prevented by a memory fragment search
+- New patterns emerge
+
+**Update memory fragment**
+
+- Better examples exist in the codebase
+- Additional edge cases are discovered
+- Related Plans, PRDs knowledge has changed
+
+When improving on things to do or not do emphasize what to do, do not include what you should not do in code blocks.
+
+- **Main points in Bold**
+  - Sub points with details
+  - Include examples and explanations
+  - Whys and What for
+
+- **Code Examples:**
+  - Use language-specific code blocks
+
+  ```typescript
+  // ✅ DO: Show good examples
+  const goodExample = true
+
+  // ❌ DON'T: Show anti-patterns
+  const badExample = false
+  ```
+
+Repository: <repository> WorkspaceId: 60c10ca2-4115-4c1a-b6d7-04ac39fd3938 Workspace: Flowcore Workspace Fragment Types:
+knowledge, recipe, solution, template, blogposts, llm persona, llm rules, plan, prd, research
+
+## Fragment Type Mapping
+
+The following fragment types are available in this workspace:
+
+- **Knowledge**: `04a5fb62-1ba5-436c-acf7-f65f3a5ba6f6`
+- **Recipe**: `502a2fcf-ca6f-4b8a-b719-cd50469d3be6`
+- **Solution**: `b06897e0-c39e-486b-8a9b-aab0ea260694`
+- **Template**: `da2cd7c6-68f6-4071-8e2e-d2a0a2773fa9`
+- **Blogposts**: `e451cb11-8ce6-4a6c-b4b2-144492382b52`
+- **LLM Persona**: `393219bd-440f-49a4-885c-ee5050af75b5`
+- **LLM Rules**: `200cbb12-47ec-4a02-afc5-0b270148587b`
+- **Plan**: `e5c9f57c-f68a-4702-bea8-d5cb02a02cb8`
+- **PRD**: `fdd14de8-3943-4228-af59-c6ecc7237a2c`
+- **Research**: `ca7aa44b-04a5-44dd-b2bf-cfedc1dbba2f`
+
+## Memory Mesh Discovery & Exploration
+
+### **Primary Discovery Process (Start Here)**
+
+**Step 1: Vector Search First**
+
+- Use `search_memory_fragments` with semantic search (understands meaning, not just keywords)
+- Always start with `repo:<repository>` tag first, then broaden if needed
+- Try different phrasings if initial search yields no results
+- Search with `workspaceId` first, then without it for broader cross-workspace results
+
+**Step 2: Follow the Thread (Iterative Exploration)**
+
+- Pick key fragments from Step 1 and explore their connections
+- Use `explore_workspace_graph` in exploration mode (depth 2+ recommended)
+- Look for: Similar/Related fragments, Concepts, Technologies
+- Target 5-10 exploration trips based on task complexity
+- Use `find_related_fragments` for direct relationship discovery
+
+**Step 3: Deep Context Building**
+
+- Continue iterative exploration until confident you have full picture
+- Use discovered fragment/concept IDs as new starting points
+- For trivial questions, Steps 1-2 may be sufficient
+- For complex tasks, comprehensive exploration prevents repeated mistakes
+
+### **Tool-Specific Guidance**
+
+### `search_memory_fragments`
+
+**Primary discovery tool - start here**
+
+- **Always include repository context** - start with `repo:<repository>` tag
+- Use semantic search for concepts, not exact text matching
+- **Decision logic**: Evaluate query complexity and result completeness to determine next steps
+
+### `explore_workspace_graph`
+
+**Two modes for different needs:**
+
+**🎯 EXPLORATION MODE (Preferred for most scenarios):**
+
+- **When to use**: Targeted discovery from specific starting points
+- **Key insight**: Works perfectly with any fragment ID - use directly from search results
+- **Concept exploration**: Use format `concepts/normalized_name` - very effective
+- **Depth recommendations**: Use depth 2+ to see connections-of-connections
+- **Starting points**: Fragment IDs, tag names, or concept IDs from previous discoveries
+
+**📊 OVERVIEW MODE (Use sparingly):**
+
+- **When to use**: Only when completely unfamiliar with workspace or lacking starting points
+- **Key insight**: Now returns actual data (recent fix applied)
+- **Warning**: Can be overwhelming - prefer exploration mode for focused discovery
+
+**🔗 Available Connection Types** (for `includeEdgeTypes`):
+
+- `"has_tag"` - Topic/technology connections (most common)
+- `"similar"`, `"related"` - AI-discovered content relationships
+- `"references_concept"` - Conceptual knowledge connections
+- `"created_by"` - Author-based discovery
+- **Default**: Empty array `[]` uses all connection types
+
+### `explore_tag_connections`
+
+**Tag-centric cluster discovery**
+
+- **When to use**: Direct tag-based lookups (_"show everything about Next.js"_)
+- Faster than full graph traversal when you know specific tags
+- **Key params**: `tags`, `workspaceId`, `limit`
+
+### `find_related_fragments`
+
+**Sibling/related document discovery**
+
+- **When to use**: Expand context around specific fragment
+- Uses similarity + tag relationships for targeted expansion
+- **Recent fix**: Now returns real data with titles, summaries, and metadata
+- **Key params**: `fragmentId` (from previous steps), `limit`
+
+### `get_memory_fragment_content`
+
+**Full document retrieval**
+
+- **When to use**: Deep-dive on confirmed relevant fragment
+- Fetches complete content including metadata
+- **Key params**: `fragmentId` (from search/exploration results)
+
+## Recent System Enhancements
+
+**✅ Reliable Patterns Now Available:**
+
+- **Overview mode**: Returns actual data (200+ fragments, 50+ tags, 1000+ concepts)
+- **Node IDs**: Full IDs exposed for direct iterative exploration
+- **Related fragments**: Returns real data with titles, summaries, and metadata
+- **Concept exploration**: Use `concepts/event_sourcing` format - very effective
+- **Fragment exploration**: Any fragment ID works directly as starting point
+
+## Temporal Analysis (When Evolution Context Needed)
+
+**Use temporal tools when queries involve**: "changed", "evolved", "used to", "before/after", "why different", "when
+did"
+
+**Quick Temporal Exploration:**
+
+- `get_temporal_relationships` with `includeHistory: true` - see relationship evolution
+- `explore_workspace_graph_temporal` with `asOfDate` - time-travel to specific point
+- `get_relationship_history` - understand specific relationship changes
+
+**Skip temporal tools for**: Current state queries, performance-critical searches
+
+### `get_temporal_relationships`
+
+**Time-aware relationship querying**
+
+- **Key params**: `fragmentId`, `workspaceId`, optional `asOfDate`, `includeHistory`, `onlyActive`
+- **Use cases**: "What relationships did this fragment have last month?", "Show evolution"
+
+### `explore_workspace_graph_temporal`
+
+**Enhanced graph exploration with time dimensions**
+
+- **Temporal features**: `asOfDate`, `includeTemporalHistory`, `showOnlyActiveRelationships`
+- **Use cases**: "How did the graph look 3 months ago?", "What changed this week?"
+
+### `get_relationship_history`
+
+**Temporal relationship evolution tracking**
+
+- **Key params**: `fromFragmentId`, `toFragmentId`, `workspaceId`
+- **Use cases**: Understanding relationship changes, debugging evolution patterns
+
+### `list_workspaces`
+
+**Workspace discovery and access management**
+
+- List all accessible workspaces with role information and permissions
+- **When to use**: Understanding available knowledge contexts
+
+### `get_fragment_types`
+
+**Fragment type discovery for workspace**
+
+- Retrieve all available fragment types including system defaults and custom types
+- **When to use**: Before creating fragments to validate type IDs
+
+## Fragment Creation & Updates
+
+### `create_memory_fragment`
+
+**Create new knowledge artifacts**
+
+- Use when you identify non-trivial solutions, patterns, recipes, or templates
+- **Always include repository context** for better organization
+- **Process**: Draft → Propose → User confirms → Create
+- **Confirmation example**: _"I'd like to document this as a `solution` fragment titled `<title>`. Proceed?"_
+
+### `update_memory_fragment`
+
+**Refine existing knowledge - supports two powerful modes**
+
+**LEGACY MODE (backwards compatible):**
+
+- Use when improving solutions, adding information, or correcting content
+- **Process**: Draft update → Show user → User confirms → Apply
+
+**PATCH MODE (new) - for precise line-level modifications:**
+
+- Use when making surgical changes to specific lines without affecting rest of content
+- **When to use**: Adding imports, modifying specific functions, inserting comments
+- **Benefits**: Reduced token usage, preserves content structure
+
+**Line Number Guidelines (CRITICAL):**
+
+- **All line numbers are 1-based** (first line = 1, not 0)
+- **Add operations**: Insert at specified line number (existing lines shift down)
+- **Delete operations**: Remove from startLine to endLine (inclusive)
+- **Replace operations**: Replace from startLine to endLine with new content
+
+**IMPORTANT CONSTRAINTS:**
+
+- ⚠️ **Cannot mix modes**: Never use both 'content' and 'patchOperations' in same request
+- ⚠️ **No overlapping operations**: Each line can only be affected by one operation
+- ⚠️ **Bounds checking**: All line numbers must be within existing content bounds
+
+## Recommended Workflow
+
+### **Pre-Task Discovery**
+
+1. **Search**: `search_memory_fragments` with `repo:<repository>` tag
+2. **Explore**: Follow connections from key fragments using exploration mode (depth 2+)
+3. **Iterate**: Continue until you have sufficient context (5-10 exploration trips typical)
+
+### **Complexity Assessment**
+
+- **Simple queries**: Vector search may be sufficient
+- **Complex tasks**: Always do iterative exploration for comprehensive understanding
+- **When in doubt**: Explore more rather than less - builds better solutions
+
+### **Post-Task Documentation**
+
+If you identify novel insights or solutions:
+
+1. **Draft & Propose**: Build fragment structure and ask user for approval
+   > _"I'd like to document this as a `<type>` fragment titled `<title>`. Proceed?"_
+2. **Create**: `create_memory_fragment` only after user confirmation
+
+**Never create/update fragments without explicit user confirmation**
+
+## Fragment Creation Strategy
+
+**Always provide `repository` context** in every MCP call when available (e.g. `"memory-mesh"`).
+
+**Document when you identify:**
+
+- Novel solutions or non-obvious patterns
+- Reusable recipes and templates
+- Critical fixes or workarounds
+- Architectural insights or best practices
+
+### **CRITICAL: Tag Character Restrictions**
+
+**⚠️ IMPORTANT: Tags have strict character requirements to prevent validation errors:**
+
+**✅ ALLOWED characters in tags:**
+
+- **Alphanumeric**: a-z, A-Z, 0-9
+- **Underscore**: _
+- **Dash**: -
+- **Colon**: :
+
+**❌ FORBIDDEN characters in tags:**
+
+- **Dots**: . (common mistake with domain names)
+- **Spaces**: (space character)
+- **Special characters**: @ # $ % & * ( ) + = [ ] { } | \ / ? < > , ; " '
+
+**For domain names, use dashes instead of dots:**
+
+- Domain: example.com → Tag: "example-com"
+- Domain: api.service.io → Tag: "api-service-io"
+
+## Common Generic Tags
+
+**Technology & Framework Tags:**
+
+- 'nodejs', 'javascript', 'typescript', 'python', 'react', 'angular', 'vue', 'nextjs'
+- 'express', 'fastify', 'nestjs', 'spring-boot', 'django', 'flask', 'rails'
+- 'docker', 'kubernetes', 'aws', 'azure', 'gcp', 'terraform', 'ansible'
+
+**Database & Storage Tags:**
+
+- 'database', 'sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'redis', 'elasticsearch'
+- 'prisma', 'typeorm', 'sequelize', 'mongoose', 'knex'
+
+**Development & Architecture Tags:**
+
+- 'authentication', 'authorization', 'oauth', 'jwt', 'security', 'encryption'
+- 'api', 'rest', 'graphql', 'microservices', 'monolith', 'serverless'
+- 'testing', 'unit-tests', 'integration-tests', 'e2e-tests', 'mocking'
+- 'ci-cd', 'deployment', 'devops', 'monitoring', 'logging', 'performance'
+
+**UI & Frontend Tags:**
+
+- 'ui', 'ux', 'design-system', 'components', 'responsive', 'accessibility'
+- 'theme', 'styling', 'css', 'sass', 'tailwind', 'styled-components'
+- 'forms', 'validation', 'state-management', 'routing', 'animation'
+
+**General Development Tags:**
+
+- 'configuration', 'environment', 'debugging', 'optimization', 'refactoring'
+- 'error-handling', 'validation', 'caching', 'pagination', 'search'
+- 'file-upload', 'email', 'notifications', 'scheduling', 'background-jobs'
+
+## Auto-Enhancement
+
+The MCP server automatically:
+
+- Injects `repo:<repository>` tag when repository context provided
+- Detects and tags technologies and topics from content
+- Prevents duplicate fragments through similarity analysis
+- Formats content for optimal readability and search
+
+## Key Success Factors
+
 - **START** with search, **EVALUATE** query complexity and result completeness
 - **BALANCE** speed for simple queries with thoroughness for complex research
 - **USE** discovered node IDs for iterative chaining when proceeding to exploration
