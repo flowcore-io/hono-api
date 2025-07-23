@@ -1,6 +1,7 @@
 import { expect } from "jsr:@std/expect"
 import { describe, it } from "jsr:@std/testing/bdd"
 import { ZodError, type ZodIssue } from "zod"
+import type { AuthorizePayload } from "../src/auth/authorize.ts"
 import {
   AppExceptionBadRequest,
   AppExceptionConflict,
@@ -76,9 +77,9 @@ describe("App Exceptions", () => {
         { policyFrn: "frn::policy:read", statementId: "stmt-1" },
         { policyFrn: "frn::policy:write", statementId: "stmt-2" },
       ]
-      const invalidRequest = [
+      const invalidRequest: AuthorizePayload[] = [
         { action: "delete", resource: ["frn::resource:123"] },
-      ] as any
+      ]
 
       const exception = new AppExceptionForbidden(
         "Insufficient permissions",
@@ -357,7 +358,7 @@ describe("App Exceptions", () => {
 
     it("should serialize forbidden exception with policy details", () => {
       const validPolicies = [{ policyFrn: "frn::policy:read", statementId: "stmt-1" }]
-      const invalidRequest = [{ action: "write", resource: ["frn::resource:123"] }] as any
+      const invalidRequest: AuthorizePayload[] = [{ action: "write", resource: ["frn::resource:123"] }]
 
       const exception = new AppExceptionForbidden("Access denied", validPolicies, invalidRequest)
 

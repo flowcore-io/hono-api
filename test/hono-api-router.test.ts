@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 import { z } from "@hono/zod-openapi"
 import { expect } from "jsr:@std/expect"
 import { beforeEach, describe, it } from "jsr:@std/testing/bdd"
@@ -50,7 +51,7 @@ describe("HonoApiRouter", () => {
           body: z.object({ name: z.string() }),
         },
         output: z.object({ id: z.string() }),
-        handler: ({ body }) => ({ id: crypto.randomUUID() }),
+        handler: ({ body: _body }) => ({ id: crypto.randomUUID() }),
       })
 
       const routes = router.getRoutes()
