@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/flowcore-io/hono-api/compare/v0.2.0...v0.3.0) (2025-07-24)
+
+
+### Features
+
+* **readme:** :sparkles: add global JWT configuration section with examples ([25f5b20](https://github.com/flowcore-io/hono-api/commit/25f5b20a3511db11fd66191074142e306c21f8c7))
+
 ## [0.2.0](https://github.com/flowcore-io/hono-api/compare/v0.1.9...v0.2.0) (2025-07-23)
 
 
