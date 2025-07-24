@@ -51,6 +51,111 @@ init({ ... }) // Too late - logger already created
 | OTEL_SERVICE_NAME | string | Service name for traces | - | ✓ |
 | OTEL_EXPORTER_OTLP_ENDPOINT | string | OTLP endpoint URL | - | ✓ |
 
+## Global JWT Configuration
+
+HonoApi supports **global JWT configuration** for custom OIDC providers like Keycloak, Okta, or Auth0. This eliminates the need to configure JWT validation per route.
+
+### ✅ Global JWT Configuration
+
+```ts
+import { HonoApi, JWTValidationConfig, FLOWCORE_JWT_CONFIG } from "@flowcore/hono-api"
+import { z } from "@hono/zod-openapi"
+
+// Custom JWT configuration for Keycloak
+const keycloakConfig: JWTValidationConfig = {
+  extractUserId: (payload) => payload.sub as string,
+  extractEmail: (payload) => payload.email as string,
+  extractIsAdmin: (payload) => {
+    const roles = payload.realm_access?.roles || []
+    return roles.includes("admin")
+  },
+  validatePayload: (payload) => {
+    if (!payload.sub) {
+      throw new Error("Missing subject in JWT")
+    }
+    if (!payload.email_verified) {
+      throw new Error("Email not verified")
+    }
+  }
+}
+
+// Option 1: Global config via auth.jwtConfig
+const api = new HonoApi({
+  auth: {
+    jwks_url: "https://your-keycloak.com/realms/your-realm/protocol/openid-connect/certs",
+    jwtConfig: keycloakConfig
+  }
+})
+
+// Option 2: Global config via authDefaults (takes precedence)
+const api = new HonoApi({
+  auth: {
+    jwks_url: "https://your-keycloak.com/realms/your-realm/protocol/openid-connect/certs",
+  },
+  authDefaults: {
+    jwtConfig: keycloakConfig,
+    optional: true // Apply to routes without explicit auth config
+  }
+})
+```
+
+### **JWT Configuration Interface**
+
+```ts
+interface JWTValidationConfig {
+  extractUserId: (payload: JWTPayload) => string
+  extractEmail?: (payload: JWTPayload) => string | undefined  
+  extractIsAdmin?: (payload: JWTPayload) => boolean
+  validatePayload?: (payload: JWTPayload) => void
+}
+```
+
+### **OIDC Provider Examples**
+
+**Keycloak Configuration:**
+```ts
+const keycloakConfig: JWTValidationConfig = {
+  extractUserId: (payload) => payload.sub as string,
+  extractEmail: (payload) => payload.email as string,
+  extractIsAdmin: (payload) => {
+    const realmRoles = payload.realm_access?.roles || []
+    return realmRoles.includes("admin")
+  }
+}
+```
+
+**Auth0 Configuration:**
+```ts
+const auth0Config: JWTValidationConfig = {
+  extractUserId: (payload) => payload.sub as string,
+  extractEmail: (payload) => payload.email as string,
+  extractIsAdmin: (payload) => {
+    const roles = payload["https://myapp.com/roles"] || []
+    return roles.includes("admin")
+  }
+}
+```
+
+**Okta Configuration:**
+```ts
+const oktaConfig: JWTValidationConfig = {
+  extractUserId: (payload) => payload.uid as string,
+  extractEmail: (payload) => payload.email as string,
+  extractIsAdmin: (payload) => {
+    const groups = payload.groups || []
+    return groups.includes("Administrators")
+  }
+}
+```
+
+### **Benefits**
+
+- ✅ **No per-route configuration** - JWT config applies globally
+- ✅ **OIDC provider flexibility** - Support any JWT issuer  
+- ✅ **Backward compatibility** - Flowcore auth still works by default
+- ✅ **Custom validation** - Add business logic to JWT validation
+- ✅ **Role-based access** - Extract admin/user roles from JWT claims
+
 ## Usage
 
 ```ts

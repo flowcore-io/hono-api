@@ -1,27 +1,38 @@
 // deno-lint-ignore-file no-explicit-any
-import type { Context, Env } from "hono"
-import { Scalar } from "@scalar/hono-api-reference"
+import { otel } from "@hono/otel"
+import { prometheus } from "@hono/prometheus"
 import { createRoute, OpenAPIHono, type RouteConfig, type z } from "@hono/zod-openapi"
-import type { HonoApiRouter, RouteOptions } from "./hono-api-router.ts"
+import { Scalar } from "@scalar/hono-api-reference"
+import type { Context, Env } from "hono"
+import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
+import { Registry } from "prom-client"
+import {
+  authenticate,
+  type Authenticated,
+  FLOWCORE_JWT_CONFIG,
+  type JWTValidationConfig,
+  type MaybeAuthenticated,
+} from "../auth/authenticate.ts"
+import { authorize, getAuthCache } from "../auth/authorize.ts"
 import {
   AppException,
   AppExceptionBadRequest,
   AppExceptionForbidden,
   AppExceptionUnauthorized,
 } from "../exceptions/app-exceptions.ts"
-import { authenticate, type Authenticated, type MaybeAuthenticated } from "../auth/authenticate.ts"
-import { authorize, getAuthCache } from "../auth/authorize.ts"
 import type { Logger } from "../lib/logger.ts"
-import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
-import { prometheus } from "@hono/prometheus"
-import { Registry } from "prom-client"
-import { otel } from "@hono/otel"
+import type { HonoApiRouter, RouteOptions } from "./hono-api-router.ts"
 
 export interface HonoApiOptions {
   auth?: {
     jwks_url?: string
     api_key_url?: string
     iam_url?: string
+    jwtConfig?: JWTValidationConfig
+  }
+  authDefaults?: {
+    jwtConfig?: JWTValidationConfig
+    optional?: boolean
   }
   openapi?: {
     docPath?: string
@@ -61,6 +72,12 @@ export class HonoApi {
     description: "Hono API",
   }
 
+  private globalJwtConfig: JWTValidationConfig = FLOWCORE_JWT_CONFIG
+  private authDefaults?: {
+    jwtConfig?: JWTValidationConfig
+    optional?: boolean
+  }
+
   constructor(options: HonoApiOptions) {
     if (options.logger) {
       this.logger = options.logger
@@ -74,7 +91,23 @@ export class HonoApi {
         ...this.authOptions,
         ...options.auth,
       }
+
+      // Set global JWT config from auth options
+      if (options.auth.jwtConfig) {
+        this.globalJwtConfig = options.auth.jwtConfig
+      }
     }
+
+    // Set auth defaults
+    if (options.authDefaults) {
+      this.authDefaults = options.authDefaults
+
+      // Auth defaults JWT config takes precedence over auth.jwtConfig
+      if (options.authDefaults.jwtConfig) {
+        this.globalJwtConfig = options.authDefaults.jwtConfig
+      }
+    }
+
     if (options.openapi) {
       this.openapiOptions = {
         ...this.openapiOptions,
@@ -262,6 +295,7 @@ export class HonoApi {
           this.authOptions.api_key_url,
           c.req.header("Authorization"),
           inOptions.auth?.type,
+          this.globalJwtConfig,
         )
         let resource: A | undefined = undefined
 
