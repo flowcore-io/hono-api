@@ -1,5 +1,5 @@
-import { assertEquals, assertRejects } from "jsr:@std/assert"
-import { afterEach, describe, it } from "jsr:@std/testing/bdd"
+import { assertEquals, assertRejects } from "@std/assert"
+import { afterEach, describe, it } from "@std/testing/bdd"
 import { authenticate } from "../src/auth/authenticate.ts"
 import { AppExceptionUnauthorized } from "../src/exceptions/app-exceptions.ts"
 

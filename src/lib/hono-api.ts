@@ -4,7 +4,7 @@ import { prometheus } from "@hono/prometheus"
 import { createRoute, OpenAPIHono, type RouteConfig, type z } from "@hono/zod-openapi"
 import { Scalar } from "@scalar/hono-api-reference"
 import type { Context, Env } from "hono"
-import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
+import { type PathwaysBuilder, SessionPathwayBuilder } from "@flowcore/pathways"
 import { Registry } from "prom-client"
 import {
   authenticate,
