@@ -4,7 +4,7 @@ import { prometheus } from "@hono/prometheus"
 import { createRoute, OpenAPIHono, type RouteConfig, type z } from "@hono/zod-openapi"
 import { Scalar } from "@scalar/hono-api-reference"
 import type { Context, Env } from "hono"
-import { type PathwaysBuilder, SessionPathwayBuilder } from "npm:@flowcore/pathways@^0.16.2"
+import { type PathwaysBuilder, SessionPathwayBuilder } from "@flowcore/pathways"
 import { Registry } from "prom-client"
 import {
   authenticate,
@@ -28,6 +28,8 @@ export interface HonoApiOptions {
     jwks_url?: string
     api_key_url?: string
     iam_url?: string
+    /** Validator for fc_-format api keys (POST /api/v1/api-keys/validate). Legacy non-fc_ keys stay on api_key_url. */
+    tenant_store_url?: string
     jwtConfig?: JWTValidationConfig
   }
   authDefaults?: {
@@ -62,6 +64,7 @@ export class HonoApi {
     jwks_url: "https://auth.flowcore.io/realms/flowcore/protocol/openid-connect/certs",
     api_key_url: "https://security-key.api.flowcore.io",
     iam_url: "https://iam.api.flowcore.io",
+    tenant_store_url: "https://tenant-store.api.flowcore.io",
   }
 
   private openapiOptions = {
@@ -296,6 +299,7 @@ export class HonoApi {
           c.req.header("Authorization"),
           inOptions.auth?.type,
           this.globalJwtConfig,
+          this.authOptions.tenant_store_url,
         )
         let resource: A | undefined = undefined
 

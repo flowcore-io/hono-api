@@ -6,7 +6,7 @@ import { defaultResponses } from "./../defaults/default-responses.ts"
 import type { AuthType } from "./../types/types.ts"
 import type { AuthorizePayload } from "./../auth/authorize.ts"
 import type { Context } from "hono"
-import type { PathwaysBuilder } from "npm:@flowcore/pathways@^0.16.2"
+import type { PathwaysBuilder } from "@flowcore/pathways"
 
 export class HonoApiRouter<PW extends PathwaysBuilder<any, any> | undefined = undefined> {
   public readonly basePath: string

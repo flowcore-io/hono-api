@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi"
-import { expect } from "jsr:@std/expect"
-import { beforeEach, describe, it } from "jsr:@std/testing/bdd"
+import { expect } from "@std/expect"
+import { beforeEach, describe, it } from "@std/testing/bdd"
 import { HonoApiRouter } from "../src/lib/hono-api-router.ts"
 import { HonoApi } from "../src/lib/hono-api.ts"
 

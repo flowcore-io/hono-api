@@ -1,5 +1,5 @@
 // ex. scripts/build_npm.ts
-import { build, emptyDir } from "jsr:@deno/dnt"
+import { build, emptyDir } from "@deno/dnt"
 import denoJson from "../deno.json" with { type: "json" }
 await emptyDir("./npm")
 

@@ -128,6 +128,7 @@ export async function authenticate(
   authorizationHeader?: string,
   allowedAuthTypes?: AuthType[],
   jwtConfig: JWTValidationConfig = FLOWCORE_JWT_CONFIG,
+  tenantStoreUrl?: string,
 ): Promise<MaybeAuthenticated> {
   const authTypes = allowedAuthTypes ?? [AuthType.Bearer, AuthType.ApiKey]
 
@@ -169,7 +170,54 @@ export async function authenticate(
   }
 
   if (authorizationHeader.startsWith("ApiKey ") && authTypes.includes(AuthType.ApiKey)) {
-    const [apiKeyId, apiKey] = authorizationHeader.slice(7).split(":")
+    const keySection = authorizationHeader.slice(7)
+
+    // Two header forms are supported:
+    //   "ApiKey <keyId>:<secret-or-full-fc-key>"  (legacy)
+    //   "ApiKey fc_<keyId>_<secret>"              (single token; keyId is the middle segment)
+    let apiKeyId: string | undefined
+    let apiKey: string | undefined
+    if (keySection.includes(":")) {
+      ;[apiKeyId, apiKey] = keySection.split(":")
+    } else if (keySection.startsWith("fc_")) {
+      apiKey = keySection
+      apiKeyId = keySection.split("_")[1]
+    }
+
+    // fc_-format keys are owned by the tenant-store; validate there. The parsed key is
+    // forwarded as-is — never reconstructed as `fc_${apiKeyId}_${apiKey}`, which
+    // double-wraps the legacy header form and fails every validation (production
+    // regression in service-tenant-api v2.14.0).
+    if (apiKey?.startsWith("fc_") && tenantStoreUrl) {
+      const response = await fetch(`${tenantStoreUrl}/api/v1/api-keys/validate`, {
+        method: "POST",
+        body: JSON.stringify({ apiKey }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        throw new AppExceptionUnauthorized()
+      }
+
+      const result = (await response.json()) as {
+        valid: boolean
+        apiKeyId?: string
+      }
+
+      if (!result.valid) {
+        throw new AppExceptionUnauthorized()
+      }
+
+      return {
+        type: "apiKey",
+        // Prefer the tenant-store's canonical id; fall back to the header parse.
+        id: result.apiKeyId ?? apiKeyId as string,
+        isFlowcoreAdmin: false,
+      }
+    }
+
     const response = await fetch(`${apiKeyUrl}/validate-organization-api-key`, {
       method: "POST",
       body: JSON.stringify({

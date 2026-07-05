@@ -1,5 +1,5 @@
-import { expect } from "jsr:@std/expect"
-import { describe, it } from "jsr:@std/testing/bdd"
+import { expect } from "@std/expect"
+import { describe, it } from "@std/testing/bdd"
 import { ZodError, type ZodIssue } from "zod"
 import type { AuthorizePayload } from "../src/auth/authorize.ts"
 import {
