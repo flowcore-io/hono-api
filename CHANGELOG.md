@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/flowcore-io/hono-api/compare/v0.3.0...v0.4.0) (2026-07-05)
+
+
+### Features
+
+* **auth:** validate fc_ api keys via tenant-store ([#37](https://github.com/flowcore-io/hono-api/issues/37)) ([512c823](https://github.com/flowcore-io/hono-api/commit/512c8236141ed9b7c2e3cf056bba376d12655a79))
+
 ## [0.3.0](https://github.com/flowcore-io/hono-api/compare/v0.2.0...v0.3.0) (2025-07-24)
 
 
