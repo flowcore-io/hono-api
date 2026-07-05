@@ -3,6 +3,7 @@ name: Build and Publish to jsr
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 permissions:
   id-token: write
@@ -33,14 +34,26 @@ jobs:
         run: deno install --frozen-lockfile
       - name: Lint
         run: deno lint
+      # Skip-if-exists keeps workflow_dispatch re-runs (e.g. to retry a failed
+      # npm publish) from failing on the already-published jsr version.
       - name: Publish to JSR
-        run: deno publish
+        run: |
+          VERSION=$(jq -r .version deno.json)
+          if curl -fsS "https://jsr.io/@flowcore/hono-api/meta.json" | jq -e --arg v "$VERSION" '.versions[$v]' >/dev/null; then
+            echo "jsr already has ${VERSION} — skipping"
+          else
+            deno publish
+          fi
       - name: Build for NPM
         run: deno run -A bin/build-npm.ts
       - uses: useblacksmith/setup-node@v5
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
-      - run: ( cd npm && npm publish --access public )
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # OIDC Trusted Publisher auth (no NPM_TOKEN): needs npm >= 11.5, node 20's
+      # bundled npm is too old. Provenance stays disabled (self-hosted Blacksmith
+      # runner). Mirrors flowcore-sdk build.yml.
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+      - name: Publish to NPM
+        run: ( cd npm && npm publish --access public --provenance=false )
