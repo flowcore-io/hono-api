@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.4.1](https://github.com/flowcore-io/hono-api/compare/v0.4.0...v0.4.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **auth:** reuse the remote JWKS key set and bound every auth fetch ([#41](https://github.com/flowcore-io/hono-api/issues/41)) ([573e9e6](https://github.com/flowcore-io/hono-api/commit/573e9e6b85c12f472b6e1778a64fa46d51c3827e))
+* **ci:** use OIDC id-token for npm publish ([#39](https://github.com/flowcore-io/hono-api/issues/39)) ([d5e3f4a](https://github.com/flowcore-io/hono-api/commit/d5e3f4abc10d69c24a35691e007933ce10c8cc74))
+
 ## [0.4.0](https://github.com/flowcore-io/hono-api/compare/v0.3.0...v0.4.0) (2026-07-05)
 
 
