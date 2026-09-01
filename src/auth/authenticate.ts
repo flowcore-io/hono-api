@@ -57,6 +57,54 @@ export interface JWTValidationConfig {
   validatePayload?: (payload: JWTPayload) => void
 }
 
+/** Bounds on the outbound calls the auth path makes. */
+export interface AuthRequestOptions {
+  /** Abort a JWKS document fetch after this many milliseconds. */
+  jwksTimeoutMs?: number
+  /** Abort an api-key validation request after this many milliseconds. */
+  apiKeyTimeoutMs?: number
+}
+
+export const DEFAULT_JWKS_TIMEOUT_MS = 5_000
+export const DEFAULT_API_KEY_TIMEOUT_MS = 5_000
+
+/**
+ * Remote key sets, keyed by JWKS URL and timeout.
+ *
+ * `createRemoteJWKSet` is stateful: the returned resolver owns the cached keys,
+ * the cooldown window and the coalescing of concurrent refreshes. Building one
+ * per request throws all of that away, so every authenticated request performed
+ * its own round trip to the identity provider. Under load that saturated the
+ * outbound connection pool and requests began failing on the JWKS fetch even
+ * though the endpoint itself answered in single-digit milliseconds.
+ *
+ * Reuse is the fix. The document is immutable between key rotations, and jose
+ * handles rotation itself through `cooldownDuration` and `cacheMaxAge`.
+ */
+const remoteJwksCache = new Map<string, ReturnType<typeof createRemoteJWKSet>>()
+
+function getRemoteJwks(jwksUrl: string, timeoutMs: number): ReturnType<typeof createRemoteJWKSet> {
+  const cacheKey = `${jwksUrl}|${timeoutMs}`
+  const cached = remoteJwksCache.get(cacheKey)
+  if (cached) {
+    return cached
+  }
+  const jwks = createRemoteJWKSet(new URL(jwksUrl), {
+    timeoutDuration: timeoutMs,
+    // Shortest interval between refetches when an unknown `kid` appears.
+    cooldownDuration: 30_000,
+    // Refetch this often even when every `kid` still resolves.
+    cacheMaxAge: 600_000,
+  })
+  remoteJwksCache.set(cacheKey, jwks)
+  return jwks
+}
+
+/** Clears the remote key set cache. Exposed for tests only. */
+export function __resetJwksCacheForTests(): void {
+  remoteJwksCache.clear()
+}
+
 // Default Flowcore configuration for backward compatibility
 export const FLOWCORE_JWT_CONFIG: JWTValidationConfig = {
   extractUserId: (payload: JWTPayload): string => {
@@ -129,15 +177,18 @@ export async function authenticate(
   allowedAuthTypes?: AuthType[],
   jwtConfig: JWTValidationConfig = FLOWCORE_JWT_CONFIG,
   tenantStoreUrl?: string,
+  requestOptions?: AuthRequestOptions,
 ): Promise<MaybeAuthenticated> {
   const authTypes = allowedAuthTypes ?? [AuthType.Bearer, AuthType.ApiKey]
+  const jwksTimeoutMs = requestOptions?.jwksTimeoutMs ?? DEFAULT_JWKS_TIMEOUT_MS
+  const apiKeyTimeoutMs = requestOptions?.apiKeyTimeoutMs ?? DEFAULT_API_KEY_TIMEOUT_MS
 
   if (!authorizationHeader) {
     return undefined
   }
 
   if (authorizationHeader.startsWith("Bearer ") && authTypes.includes(AuthType.Bearer)) {
-    const jwks = createRemoteJWKSet(new URL(jwksUrl))
+    const jwks = getRemoteJwks(jwksUrl, jwksTimeoutMs)
     const token = authorizationHeader.slice(7)
     const decoded = await jwtVerify(token, jwks).catch((error) => {
       logger.error(error)
@@ -189,16 +240,21 @@ export async function authenticate(
     // double-wraps the legacy header form and fails every validation (production
     // regression in service-tenant-api v2.14.0).
     if (apiKey?.startsWith("fc_") && tenantStoreUrl) {
-      const response = await fetch(`${tenantStoreUrl}/api/v1/api-keys/validate`, {
-        method: "POST",
-        body: JSON.stringify({ apiKey }),
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetchWithTimeout(
+        `${tenantStoreUrl}/api/v1/api-keys/validate`,
+        {
+          method: "POST",
+          body: JSON.stringify({ apiKey }),
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      })
+        apiKeyTimeoutMs,
+        logger,
+      )
 
       if (!response.ok) {
-        throw new AppExceptionUnauthorized()
+        throw new AppExceptionUnauthorized(`API key validation failed upstream with status ${response.status}`)
       }
 
       const result = (await response.json()) as {
@@ -218,19 +274,24 @@ export async function authenticate(
       }
     }
 
-    const response = await fetch(`${apiKeyUrl}/validate-organization-api-key`, {
-      method: "POST",
-      body: JSON.stringify({
-        apiKeyId,
-        apiKey,
-      }),
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetchWithTimeout(
+      `${apiKeyUrl}/validate-organization-api-key`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          apiKeyId,
+          apiKey,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    })
+      apiKeyTimeoutMs,
+      logger,
+    )
 
     if (!response.ok) {
-      throw new AppExceptionUnauthorized()
+      throw new AppExceptionUnauthorized(`API key validation failed upstream with status ${response.status}`)
     }
 
     const result = (await response.json()) as {
@@ -250,4 +311,31 @@ export async function authenticate(
   }
 
   throw new AppExceptionUnauthorized()
+}
+
+/**
+ * Perform an auth request that cannot outlive `timeoutMs`.
+ *
+ * An unbounded `fetch` on the auth path is not a slow request, it is a stuck
+ * one: the caller holds its slot until its own deadline, and callers queue
+ * behind it. Bounding it converts an indefinite stall into a fast, explicit
+ * 401.
+ */
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs: number,
+  logger: Logger,
+): Promise<Response> {
+  try {
+    return await fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) })
+  } catch (error: unknown) {
+    logger.error(error instanceof Error ? error : String(error))
+    const timedOut = error instanceof Error && error.name === "TimeoutError"
+    throw new AppExceptionUnauthorized(
+      timedOut
+        ? `API key validation timed out after ${timeoutMs}ms`
+        : `API key validation request failed: ${error instanceof Error ? error.message : String(error)}`,
+    )
+  }
 }
