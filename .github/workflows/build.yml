@@ -14,26 +14,28 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2204
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           token: ${{ secrets.FLOWCORE_MACHINE_GITHUB_TOKEN }}
           submodules: true
       - name: Extract version from deno.json
-        uses: sergeysova/jq-action@v2
         id: version
-        with:
-          cmd: "jq .version deno.json -r"
+        run: echo "value=$(jq -r .version deno.json)" >> "$GITHUB_OUTPUT"
       - name: Show my version
         run: 'echo "version ${{ steps.version.outputs.value }}"'
 
       - name: Setup Deno2 environment
-        uses: denoland/setup-deno@v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.x
       - name: Deno install
         run: deno install --frozen-lockfile
       - name: Lint
         run: deno lint
+      # Never publish a version the suite has not passed. The release path used
+      # to lint only, so a green PR was the last gate before npm and jsr.
+      - name: Test
+        run: deno test -A
       # Skip-if-exists keeps workflow_dispatch re-runs (e.g. to retry a failed
       # npm publish) from failing on the already-published jsr version.
       - name: Publish to JSR
@@ -46,14 +48,16 @@ jobs:
           fi
       - name: Build for NPM
         run: deno run -A bin/build-npm.ts
-      - uses: useblacksmith/setup-node@v5
+      - uses: useblacksmith/setup-node@f62cb7338cb1259916d436a58ead919a3d15c5a9 # v5
         with:
           node-version: "20.x"
           registry-url: "https://registry.npmjs.org"
-      # OIDC Trusted Publisher auth (no NPM_TOKEN): needs npm >= 11.5, node 20's
-      # bundled npm is too old. Provenance stays disabled (self-hosted Blacksmith
-      # runner). Mirrors flowcore-sdk build.yml.
-      - name: Update npm to latest
-        run: npm install -g npm@latest
+      # OIDC Trusted Publisher auth (no NPM_TOKEN) needs npm >= 11.5, and node
+      # 20's bundled npm is too old. Do NOT use npm@latest here: npm 12 requires
+      # node ^22.22.2 || ^24.15.0 || >=26.0.0, so it cannot run on the node 20
+      # set up above. Pin to 11.x, matching flowcore-sdk.
+      # Provenance stays disabled (self-hosted Blacksmith runner).
+      - name: Update npm
+        run: npm install -g npm@11
       - name: Publish to NPM
         run: ( cd npm && npm publish --access public --provenance=false )

@@ -16,21 +16,19 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2204
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
           token: ${{ secrets.FLOWCORE_MACHINE_GITHUB_TOKEN }}
           submodules: true
       - name: Extract version from deno.json
-        uses: sergeysova/jq-action@v2
         id: version
-        with:
-          cmd: "jq .version deno.json -r"
+        run: echo "value=$(jq -r .version deno.json)" >> "$GITHUB_OUTPUT"
 
       - name: Show my version
         run: 'echo "version ${{ steps.version.outputs.value }}"'
 
       - name: Setup Deno2 environment
-        uses: denoland/setup-deno@v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.x
       - name: Deno install
@@ -41,5 +39,7 @@ jobs:
         run: deno lint
       - name: Format
         run: deno fmt --check
+      - name: Typecheck
+        run: deno task typecheck
       - name: Test
         run: deno test -A

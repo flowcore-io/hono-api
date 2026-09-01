@@ -7,26 +7,35 @@ env:
   NODE_VERSION: ">=22.15.0"
 
 name: release-please
+
+permissions:
+  contents: read
+
 jobs:
   release-please:
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
-      - uses: actions/checkout@v3
-      - name: Extract package name from deno.json
-        uses: sergeysova/jq-action@v2
-        id: package
+      # Flowcore Release Bot instead of the shared FLOWCORE_MACHINE_GITHUB_TOKEN
+      # PAT. Every repo shared that PAT's 5k req/hr limit.
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3
+        id: app-token
         with:
-          cmd: "jq .name deno.json -r"
+          app-id: ${{ vars.RELEASE_PLEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_PLEASE_APP_PRIVATE_KEY }}
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
+      - name: Extract package name from deno.json
+        id: package
+        run: echo "value=$(jq -r .name deno.json)" >> "$GITHUB_OUTPUT"
       - name: Setup Deno2 environment
-        uses: denoland/setup-deno@v2
+        uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed # v2.0.5
         with:
           deno-version: v2.x
       - name: Deno install
         run: deno install --frozen-lockfile
       - name: Show package name
         run: 'echo "version ${{ steps.package.outputs.value }}"'
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@8b8fd2cc23b2e18957157a9d923d75aa0c6f6ad5 # v4
         with:
-          token: ${{ secrets.FLOWCORE_MACHINE_GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           config-file: .github/workflows/release-please-config.json
           manifest-file: .github/workflows/.release-please-manifest.json
