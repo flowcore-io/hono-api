@@ -9,6 +9,8 @@ import { Registry } from "prom-client"
 import {
   authenticate,
   type Authenticated,
+  DEFAULT_API_KEY_TIMEOUT_MS,
+  DEFAULT_JWKS_TIMEOUT_MS,
   FLOWCORE_JWT_CONFIG,
   type JWTValidationConfig,
   type MaybeAuthenticated,
@@ -30,6 +32,10 @@ export interface HonoApiOptions {
     iam_url?: string
     /** Validator for fc_-format api keys (POST /api/v1/api-keys/validate). Legacy non-fc_ keys stay on api_key_url. */
     tenant_store_url?: string
+    /** Milliseconds before a JWKS document fetch is aborted. Defaults to 5000. */
+    jwks_timeout_ms?: number
+    /** Milliseconds before an api-key validation request is aborted. Defaults to 5000. */
+    api_key_timeout_ms?: number
     jwtConfig?: JWTValidationConfig
   }
   authDefaults?: {
@@ -65,6 +71,8 @@ export class HonoApi {
     api_key_url: "https://security-key.api.flowcore.io",
     iam_url: "https://iam.api.flowcore.io",
     tenant_store_url: "https://tenant-store.api.flowcore.io",
+    jwks_timeout_ms: DEFAULT_JWKS_TIMEOUT_MS,
+    api_key_timeout_ms: DEFAULT_API_KEY_TIMEOUT_MS,
   }
 
   private openapiOptions = {
@@ -300,6 +308,10 @@ export class HonoApi {
           inOptions.auth?.type,
           this.globalJwtConfig,
           this.authOptions.tenant_store_url,
+          {
+            jwksTimeoutMs: this.authOptions.jwks_timeout_ms,
+            apiKeyTimeoutMs: this.authOptions.api_key_timeout_ms,
+          },
         )
         let resource: A | undefined = undefined
 
