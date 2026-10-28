@@ -38,6 +38,9 @@ await build({
       "zod": "^3.25.63",
       "@flowcore/pathways": "^0.16.2",
     },
+    devDependencies: {
+      "zod4-test": "npm:zod@4.4.3",
+    },
     exports: {
       ".": {
         "import": "./esm/mod.js",
@@ -46,6 +49,10 @@ await build({
       "./otel": {
         "import": "./esm/otel/mod.js",
         "require": "./script/otel/mod.js",
+      },
+      "./logger": {
+        "import": "./esm/lib/logger.js",
+        "require": "./script/lib/logger.js",
       },
     },
   },

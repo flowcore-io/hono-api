@@ -1,5 +1,25 @@
 # Flowcore Hono API Builder
 
+## Logger-only usage
+
+Applications that only need logging can import the public logger entry without loading
+the API, OpenAPI schema extensions, or OpenTelemetry initialization module:
+
+```ts
+import { LogLevel, loggerFactory } from "@flowcore/hono-api/logger"
+
+const logger = loggerFactory({
+  prettyPrintLogs: false,
+  logLevel: LogLevel.Info,
+}).createLogger("my-service")
+
+logger.info("Application starting")
+```
+
+This entry supports logger-only consumers using Zod 4; it does not add Zod 4 support
+to the API/OpenAPI entry. For trace-log correlation, explicitly initialize
+`@flowcore/hono-api/otel` before creating loggers, as described below.
+
 ## OpenTelemetry Trace-Log Correlation
 
 For trace-log correlation to work properly, **initialization order is critical**:

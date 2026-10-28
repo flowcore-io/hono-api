@@ -36,6 +36,8 @@ jobs:
         run: deno install --frozen-lockfile
       - name: Validate NPM build
         run: deno run -A bin/build-npm.ts
+      - name: Verify logger-only NPM exports
+        run: node bin/verify-npm-logger.mjs
       - name: Lint
         run: deno lint
       - name: Format

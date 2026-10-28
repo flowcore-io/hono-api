@@ -6,7 +6,8 @@
   "license": "MIT",
   "exports": {
     ".": "./src/mod.ts",
-    "./otel": "./src/otel/mod.ts"
+    "./otel": "./src/otel/mod.ts",
+    "./logger": "./src/lib/logger.ts"
   },
   "publish": {
     "include": [

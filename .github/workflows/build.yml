@@ -48,6 +48,8 @@ jobs:
           fi
       - name: Build for NPM
         run: deno run -A bin/build-npm.ts
+      - name: Verify logger-only NPM exports
+        run: node bin/verify-npm-logger.mjs
       - uses: useblacksmith/setup-node@f62cb7338cb1259916d436a58ead919a3d15c5a9 # v5
         with:
           node-version: "20.x"
